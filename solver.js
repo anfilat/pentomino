@@ -58,15 +58,15 @@ export class Solver {
     remove(rowStack, colStack, fall) {
         let slide = fall;
         do {
-            let deletor = slide.down;
-            while (deletor !== slide) {
-                rowStack.push(this.scene.removeRow(deletor.row));
-                deletor = deletor.down;
+            let deleter = slide.down;
+            while (deleter !== slide) {
+                rowStack.push(this.scene.removeRow(deleter));
+                deleter = deleter.down;
             }
             colStack.push(slide.col);
             slide = slide.right;
         } while (slide !== fall);
-        rowStack.push(this.scene.removeRow(fall.row));
+        rowStack.push(this.scene.removeRow(fall));
         colStack.forEach(col => this.scene.removeCol(col));
     }
 
@@ -86,8 +86,7 @@ export class Solver {
             cube[i] = '*';
         }
 
-        this.sol.forEach(({name}, index) => {
-            const subset = this.subsets[name - 1];
+        this.sol.forEach(({subset}, index) => {
             for (let i = 0; i < 5; i++) {
                 cube[subset[i]] = 65 + index;
             }
