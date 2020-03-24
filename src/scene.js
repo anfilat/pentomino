@@ -3,10 +3,10 @@ export class Scene {
     #colNum;
     #rowNum;
 
-    constructor(colNum, subsets) {
+    constructor(colNum, rows) {
         this.#rowNum = 0;
         const cols = this._createCols(colNum);
-        this._insertRows(cols, subsets);
+        this._insertRows(cols, rows);
     }
 
     _createCols(num) {
@@ -31,11 +31,11 @@ export class Scene {
         return cols;
     }
 
-    _insertRows(cols, subsets) {
-        subsets.forEach(subset => {
-            const row = new Row(subset);
+    _insertRows(cols, rows) {
+        rows.forEach(rowData => {
+            const row = new Row(rowData);
             let prevNode = null;
-            subset.forEach(colIndex => {
+            rowData.subset.forEach(colIndex => {
                 prevNode = new Node(row, cols[colIndex], prevNode);
             });
             this.#rowNum++;
@@ -198,10 +198,8 @@ class Node {
     }
 }
 
-function Row(subset) {
-    return {
-        subset,
-    };
+function Row(rowData) {
+    return rowData;
 }
 
 function Col() {

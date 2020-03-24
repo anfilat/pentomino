@@ -1,3 +1,5 @@
+import {mirrorX, mirrorY, mirrorXY, rotate} from './utils.js';
+
 export function variateFigure({name, matrix}) {
     const variants = new Set();
     const results = [];
@@ -27,79 +29,13 @@ function addVariant(variants, results, name, matrix) {
     }
 }
 
-function mirrorX(matrix) {
-    const yMax = matrix.length;
-    const xMax = matrix[0].length;
-    const newMatrix = [];
-
-    for (let y = 0; y < yMax; y++) {
-        const line = [];
-        for (let x = 0; x < xMax; x++) {
-            line.push(matrix[y][xMax - x - 1]);
-        }
-        newMatrix.push(line);
-    }
-
-    return newMatrix;
-}
-
-function mirrorY(matrix) {
-    const yMax = matrix.length;
-    const xMax = matrix[0].length;
-    const newMatrix = [];
-
-    for (let y = 0; y < yMax; y++) {
-        const line = [];
-        for (let x = 0; x < xMax; x++) {
-            line.push(matrix[yMax - y - 1][x]);
-        }
-        newMatrix.push(line);
-    }
-
-    return newMatrix;
-}
-
-function mirrorXY(matrix) {
-    const yMax = matrix.length;
-    const xMax = matrix[0].length;
-    const newMatrix = [];
-
-    for (let y = 0; y < yMax; y++) {
-        const line = [];
-        for (let x = 0; x < xMax; x++) {
-            line.push(matrix[yMax - y - 1][xMax - x - 1]);
-        }
-        newMatrix.push(line);
-    }
-
-    return newMatrix;
-}
-
-function rotate(matrix) {
-    const yMax = matrix.length;
-    const xMax = matrix[0].length;
-    const newMatrix = [];
-
-    for (let x = 0; x < xMax; x++) {
-        newMatrix.push([]);
-    }
-    for (let x = 0; x < xMax; x++) {
-        for (let y = 0; y < yMax; y++) {
-            newMatrix[x].push(matrix[y][x]);
-        }
-    }
-
-    return newMatrix;
-}
-
-function figureToString(figure) {
-    const {name, matrix} = figure;
+function figureToString({matrix}) {
     const yMax = matrix.length;
     const xMax = matrix[0].length;
     let s = '';
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += matrix[y][x] === 1 ? name : ' ';
+            s += matrix[y][x] === 1 ? '*' : ' ';
         }
         s += '\n';
     }

@@ -1,25 +1,29 @@
 import {Scene} from "./scene.js";
-import {init2DimArray, passedTime} from "./utils.js";
+import {equalMatrix, passedTime} from "./utils.js";
 
 export class Solver {
-    colNum;
-    createSubsets;
+    xMax;
+    yMax;
+    columns;
+    rows;
+    mirrors;
     startTime;
-    subsets;
     scene;
     sol;
     sols;
 
-    constructor(colNum, createSubsets) {
-        this.colNum = colNum;
-        this.createSubsets = createSubsets;
+    constructor({xMax, yMax, columns, rows, mirrors}) {
+        this.xMax = xMax;
+        this.yMax = yMax;
+        this.columns = columns;
+        this.rows = rows;
+        this.mirrors = mirrors;
     }
 
     findSolutions() {
         this.startTime = new Date();
 
-        this.subsets = this.createSubsets();
-        this.scene = new Scene(this.colNum, this.subsets);
+        this.scene = new Scene(this.columns.length, this.rows);
         this.sol = [];
         this.sols = [];
 
@@ -48,6 +52,9 @@ export class Solver {
             this.sol.push(fall.row);
             this.remove(rowStack, colStack, fall);
             this.routineX();
+            /*if (this.sols.length > 0) {
+                return;
+            }*/
             this.restore(rowStack, colStack);
             this.sol.pop();
 
@@ -81,100 +88,62 @@ export class Solver {
 
     /* save and print out solution found if it's unique */
     saveSolution() {
-        const cube = [];
-        for (let i = 0; i < 125; i++) {
-            cube[i] = '*';
+        const solution = [];
+        for (let y = 0; y < this.yMax; y++) {
+            const line = [];
+            for (let x = 0; x < this.xMax; x++) {
+                line.push(' ');
+            }
+            solution.push(line);
         }
 
-        this.sol.forEach(({subset}, index) => {
-            for (let i = 0; i < 5; i++) {
-                cube[subset[i]] = 65 + index;
+        this.sol.forEach(({name, subset}) => {
+            for (let i = 1; i < subset.length; i++) {
+                const {x, y} = this.columns[subset[i]];
+                solution[y][x] = name;
             }
         });
 
-        if (!this.isUnique(cube)) {
+        if (!this.isUnique(solution)) {
             return;
         }
 
-        this.sols.push(cube);
+        this.sols.push(solution);
 
         console.log(`\nSolution ${this.sols.length} found in ${passedTime(this.startTime)} s:\n`);
-        this.printSolution(cube);
+        this.printSolution(solution);
     }
 
-    printSolution(cube) {
-        for (let y = 0; y < 5; y++) {
-            let s = '\t';
-            for (let z = 0; z < 5; z++) {
-                for (let x = 0; x < 5; x++) {
-                    s += String.fromCharCode(cube[25 * z + 5 * y + x]);
-                }
-                s += ' ';
+    printSolution(solution) {
+        for (let y = 0; y < this.yMax; y++) {
+            let s = '';
+            for (let x = 0; x < this.xMax; x++) {
+                s += solution[y][x];
             }
             console.log(s);
         }
     }
 
-    /* rotate and reflect the solution
-       and compare to already found ones
-    */
-    isUnique(s) {
-        if (this.sols.length === 0) {
-            return true;
+    isUnique(solution) {
+        for (let i = 0; i < this.sols.length; i++) {
+            if (this.equalSolutions(solution, this.sols[i])) {
+                return false;
+            }
         }
 
-        const tr = init2DimArray(48);
-        for (let x = 0; x < 5; x++) {
-            for (let y = 0; y < 5; y++) {
-                for (let z = 0; z < 5; z++) {
-                    const c = s[25 * z + 5 * y + x];
-                    for (let px = 0; px < 2; px++) {
-                        const X = px ? 4 - x : x;
-                        for (let py = 0; py < 2; py++) {
-                            const Y = py ? 4 - y : y;
-                            for (let pz = 0; pz < 2; pz++) {
-                                const Z = pz ? 4 - z : z;
-                                tr[6 * (4 * pz + 2 * py + px)    ][25 * Z + 5 * Y + X] = c;
-                                tr[6 * (4 * pz + 2 * py + px) + 1][25 * Y + 5 * X + Z] = c;
-                                tr[6 * (4 * pz + 2 * py + px) + 2][25 * X + 5 * Z + Y] = c;
-                                tr[6 * (4 * pz + 2 * py + px) + 3][25 * X + 5 * Y + Z] = c;
-                                tr[6 * (4 * pz + 2 * py + px) + 4][25 * Y + 5 * Z + X] = c;
-                                tr[6 * (4 * pz + 2 * py + px) + 5][25 * Z + 5 * X + Y] = c;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        for (let i = 0; i < 48; i++) {
-            for (let j = 0; j < this.sols.length; j++) {
-                if (this.compareSolutions(this.sols[j], tr[i])) {
-                    return false;
-                }
-            }
-        }
         return true;
     }
 
-    /* compare to solution string
-       whether they represent the same solution
-       for example, ABBAA and ACCAA
-    */
-    compareSolutions(s1, s2) {
-        const arr = [];
-        for (let i = 0; i < 125; i++) {
-            arr[i] = 100 * (s1[i] - 65) + (s2[i] - 65);
+    equalSolutions(newSolution, oldSolution) {
+        if (equalMatrix(newSolution, oldSolution)) {
+            return true;
         }
-
-        arr.sort((a, b) => a - b);
-
-        let num = 1;
-        for (let i = 1; i < 125; i++) {
-            if (arr[i] !== arr[i - 1]) {
-                num++;
+        for (let i = 0; i < this.mirrors.length; i++) {
+            if (equalMatrix(this.mirrors[i](newSolution), oldSolution)) {
+                return true;
             }
         }
 
-        return num === 25;
+        return false;
     }
 }
