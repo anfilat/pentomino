@@ -139,7 +139,7 @@ export class Solver {
             return true;
         }
         for (let i = 0; i < this.mirrors.length; i++) {
-            if (equalMatrix(this.mirrors[i](newSolution), oldSolution)) {
+            if (this.mirrors[i](newSolution, oldSolution)) {
                 return true;
             }
         }

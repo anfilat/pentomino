@@ -1,6 +1,11 @@
 import {ErrorAreaNotDiv5, ErrorAreaIs0, ErrorAreaGreaterFigures} from './errors.js';
 import {variateFigure, figures} from './figures.js';
-import {mirrorX, mirrorY, mirrorXY, rotate, equalMatrix} from './utils.js';
+import {
+    equalMatrix,
+    mirrorX, mirrorY, mirrorXY, rotate,
+    equalByMirrorX, equalByMirrorY, equalByMirrorXY, equalByRotate,
+    equalByRotateAndMirrorX, equalByRotateAndMirrorY, equalByRotateAndMirrorXY,
+} from './utils.js';
 
 const figureLength = 5;
 
@@ -160,25 +165,25 @@ function getMirrors(space) {
     const mirrors = [];
 
     if (equalMatrix(space, mirrorX(space))) {
-        mirrors.push(mirrorX);
+        mirrors.push(equalByMirrorX);
     }
     if (equalMatrix(space, mirrorY(space))) {
-        mirrors.push(mirrorY);
+        mirrors.push(equalByMirrorY);
     }
     if (equalMatrix(space, mirrorXY(space))) {
-        mirrors.push(mirrorXY);
+        mirrors.push(equalByMirrorXY);
     }
     if (equalMatrix(space, rotate(space))) {
-        mirrors.push(rotate);
+        mirrors.push(equalByRotate);
     }
     if (equalMatrix(space, mirrorX(rotate(space)))) {
-        mirrors.push(x => mirrorX(rotate(x)));
+        mirrors.push(equalByRotateAndMirrorX);
     }
     if (equalMatrix(space, mirrorY(rotate(space)))) {
-        mirrors.push(x => mirrorY(rotate(x)));
+        mirrors.push(equalByRotateAndMirrorY);
     }
     if (equalMatrix(space, mirrorXY(rotate(space)))) {
-        mirrors.push(x => mirrorXY(rotate(x)));
+        mirrors.push(equalByRotateAndMirrorXY);
     }
 
     return mirrors;
