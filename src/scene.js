@@ -12,23 +12,29 @@ export class Scene {
     _createCols(columns) {
         const cols = [];
 
+        let firstColNum = null;
         let lastCol = null;
         for (let i = 0; i < columns.length; i++) {
             const areaColumn = columns[i] !== null;
             const col = new Col(areaColumn);
             cols.push(col);
 
-            if (lastCol !== null) {
-                col.left = lastCol;
-                lastCol.right = col;
+            if (areaColumn) {
+                if (firstColNum === null) {
+                    firstColNum = i;
+                }
+                if (lastCol !== null) {
+                    col.left = lastCol;
+                    lastCol.right = col;
+                }
+                lastCol = col;
             }
-            lastCol = col;
         }
-        cols[0].left = cols[cols.length - 1];
-        cols[cols.length - 1].right = cols[0];
+        cols[firstColNum].left = cols[cols.length - 1];
+        cols[cols.length - 1].right = cols[firstColNum];
 
-        this.#cPtr = cols[0];
-        this.#colNum = cols.length;
+        this.#cPtr = cols[firstColNum];
+        this.#colNum = cols.length - firstColNum;
         return cols;
     }
 
@@ -44,26 +50,12 @@ export class Scene {
     }
 
     noCols() {
-        return this.#colNum === 0 || !this.#cPtr.left.areaColumn;
+        return this.#colNum === 0;
     }
 
     noRows() {
         return this.#rowNum === 0;
     }
-
-    /*print() {
-        let col = this.#cPtr;
-        do {
-            let node = col.head;
-            let s = '';
-            do {
-                s += node.row.name + node.row.subset[0] + ' ';
-                node = node.down;
-            } while (node !== col.head);
-            console.log(s);
-            col = col.right;
-        } while (col !== this.#cPtr);
-    }*/
 
     // select column with minimal number of elements
     selectCol() {
@@ -71,7 +63,7 @@ export class Scene {
         let min = this.#cPtr.length;
         let col = this.#cPtr.right;
         while (col !== this.#cPtr) {
-            if (col.length < min && !(col.length === 0 && !col.areaColumn)) {
+            if (col.length < min) {
                 mc = col;
                 min = col.length;
             }
@@ -88,15 +80,17 @@ export class Scene {
                 node = node.down;
             } while (node !== col.head);
         }
-        col.left.right = col.right;
-        col.right.left = col.left;
-        if (this.#cPtr === col) {
-            this.#cPtr = col.right;
-            col.restoreCPtr = true;
-        } else {
-            col.restoreCPtr = false;
+        if (col.areaColumn) {
+            col.left.right = col.right;
+            col.right.left = col.left;
+            if (this.#cPtr === col) {
+                this.#cPtr = col.right;
+                col.restoreCPtr = true;
+            } else {
+                col.restoreCPtr = false;
+            }
+            this.#colNum--;
         }
-        this.#colNum--;
     }
 
     restoreCol(col) {
@@ -107,12 +101,14 @@ export class Scene {
                 node = node.down;
             } while (node !== col.head);
         }
-        col.left.right = col;
-        col.right.left = col;
-        if (col.restoreCPtr) {
-            this.#cPtr = col;
+        if (col.areaColumn) {
+            col.left.right = col;
+            col.right.left = col;
+            if (col.restoreCPtr) {
+                this.#cPtr = col;
+            }
+            this.#colNum++;
         }
-        this.#colNum++;
     }
 
     removeRow(node) {
