@@ -3,18 +3,19 @@ export class Scene {
     #colNum;
     #rowNum;
 
-    constructor(colNum, rows) {
+    constructor(columns, rows) {
         this.#rowNum = 0;
-        const cols = this._createCols(colNum);
+        const cols = this._createCols(columns);
         this._insertRows(cols, rows);
     }
 
-    _createCols(num) {
+    _createCols(columns) {
         const cols = [];
 
         let lastCol = null;
-        for (let i = 0; i < num; i++) {
-            const col = new Col();
+        for (let i = 0; i < columns.length; i++) {
+            const areaColumn = columns[i] !== null;
+            const col = new Col(areaColumn);
             cols.push(col);
 
             if (lastCol !== null) {
@@ -27,7 +28,7 @@ export class Scene {
         cols[cols.length - 1].right = cols[0];
 
         this.#cPtr = cols[0];
-        this.#colNum = num;
+        this.#colNum = cols.length;
         return cols;
     }
 
@@ -42,13 +43,27 @@ export class Scene {
         });
     }
 
-    get colNum() {
-        return this.#colNum;
+    noCols() {
+        return this.#colNum === 0 || !this.#cPtr.left.areaColumn;
     }
 
-    get rowNum() {
-        return this.#rowNum;
+    noRows() {
+        return this.#rowNum === 0;
     }
+
+    /*print() {
+        let col = this.#cPtr;
+        do {
+            let node = col.head;
+            let s = '';
+            do {
+                s += node.row.name + node.row.subset[0] + ' ';
+                node = node.down;
+            } while (node !== col.head);
+            console.log(s);
+            col = col.right;
+        } while (col !== this.#cPtr);
+    }*/
 
     // select column with minimal number of elements
     selectCol() {
@@ -56,7 +71,7 @@ export class Scene {
         let min = this.#cPtr.length;
         let col = this.#cPtr.right;
         while (col !== this.#cPtr) {
-            if (col.length < min) {
+            if (col.length < min && !(col.length === 0 && !col.areaColumn)) {
                 mc = col;
                 min = col.length;
             }
@@ -202,9 +217,10 @@ function Row(rowData) {
     return rowData;
 }
 
-function Col() {
+function Col(areaColumn) {
     return {
         length: 0,
+        areaColumn,
         head: null,
         left: null,
         right: null,

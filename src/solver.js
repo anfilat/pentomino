@@ -23,7 +23,7 @@ export class Solver {
     findSolutions() {
         this.startTime = new Date();
 
-        this.scene = new Scene(this.columns.length, this.rows);
+        this.scene = new Scene(this.columns, this.rows);
         this.sol = [];
         this.sols = [];
 
@@ -33,11 +33,11 @@ export class Solver {
     }
 
     routineX() {
-        if (this.scene.colNum === 0) {
+        if (this.scene.noCols()) {
             this.saveSolution();
             return;
         }
-        if (this.scene.rowNum === 0) {
+        if (this.scene.noRows()) {
             return;
         }
         const mc = this.scene.selectCol();
