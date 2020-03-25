@@ -10,7 +10,7 @@ export class Solver {
     startTime;
     scene;
     sol;
-    sols;
+    solsCount;
     solsSet;
     printSolution;
     stop;
@@ -25,7 +25,7 @@ export class Solver {
 
     findOneSolution(printSolution) {
         this.printSolution = printSolution;
-        this.stop = () => this.sols.length > 0;
+        this.stop = () => this.solsCount > 0;
         this.find();
     }
 
@@ -40,7 +40,7 @@ export class Solver {
 
         this.scene = new Scene(this.columns, this.rows);
         this.sol = [];
-        this.sols = [];
+        this.solsCount = 0;
         this.solsSet = new Set();
 
         console.log(`\nSparse array filled in ${new Date() - this.startTime} ms.\n`);
@@ -110,14 +110,14 @@ export class Solver {
             return;
         }
 
-        this.sols.push(solution);
+        this.solsCount++;
 
         this.solsSet.add(s);
         for (let i = 1; i < this.mirrors.length; i++) {
             this.solsSet.add(this.mirrors[i](solution));
         }
 
-        console.log(`\nSolution ${this.sols.length} found in ${passedTime(this.startTime)} s:\n`);
+        console.log(`\nSolution ${this.solsCount} found in ${passedTime(this.startTime)} s:\n`);
         this.printSolution(solution);
     }
 
