@@ -13,6 +13,7 @@ export class Solver {
     sols;
     solsSet;
     printSolution;
+    stop;
 
     constructor({xMax, yMax, columns, rows, mirrors}) {
         this.xMax = xMax;
@@ -22,9 +23,19 @@ export class Solver {
         this.mirrors = mirrors;
     }
 
+    findOneSolution(printSolution) {
+        this.printSolution = printSolution;
+        this.stop = () => this.sols.length > 0;
+        this.find();
+    }
+
     findSolutions(printSolution) {
         this.printSolution = printSolution;
+        this.stop = () => false;
+        this.find();
+    }
 
+    find() {
         this.startTime = new Date();
 
         this.scene = new Scene(this.columns, this.rows);
@@ -57,9 +68,9 @@ export class Solver {
             this.sol.push(fall.row);
             this.remove(rowStack, colStack, fall);
             this.routineX();
-            /*if (this.sols.length > 0) {
+            if (this.stop()) {
                 return;
-            }*/
+            }
             this.restore(rowStack, colStack);
             this.sol.pop();
 
