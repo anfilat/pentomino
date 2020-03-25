@@ -1,11 +1,6 @@
 import {ErrorAreaNotDiv5, ErrorAreaIs0, ErrorAreaGreaterFigures} from './errors.js';
 import {variateFigure, figures} from './figures.js';
-import {
-    equalMatrix,
-    mirrorX, mirrorY, mirrorXY, rotate,
-    equalByMirrorX, equalByMirrorY, equalByMirrorXY, equalByRotate,
-    equalByRotateAndMirrorX, equalByRotateAndMirrorY, equalByRotateAndMirrorXY,
-} from './utils.js';
+import {equalMatrix, mirrorX, mirrorY, mirrorXY, rotate} from './utils.js';
 
 const figureLength = 5;
 
@@ -162,29 +157,141 @@ function createRows(items, checkMatrix) {
 }
 
 function getMirrors(space) {
-    const mirrors = [];
+    const mirrors = [solutionToString];
 
     if (equalMatrix(space, mirrorX(space))) {
-        mirrors.push(equalByMirrorX);
+        mirrors.push(solutionMirrorXToString);
     }
     if (equalMatrix(space, mirrorY(space))) {
-        mirrors.push(equalByMirrorY);
+        mirrors.push(solutionMirrorYToString);
     }
     if (equalMatrix(space, mirrorXY(space))) {
-        mirrors.push(equalByMirrorXY);
+        mirrors.push(solutionMirrorXYToString);
     }
     if (equalMatrix(space, rotate(space))) {
-        mirrors.push(equalByRotate);
+        mirrors.push(solutionRotateToString);
     }
     if (equalMatrix(space, mirrorX(rotate(space)))) {
-        mirrors.push(equalByRotateAndMirrorX);
+        mirrors.push(solutionRotateAndMirrorXToString);
     }
     if (equalMatrix(space, mirrorY(rotate(space)))) {
-        mirrors.push(equalByRotateAndMirrorY);
+        mirrors.push(solutionRotateAndMirrorYToString);
     }
     if (equalMatrix(space, mirrorXY(rotate(space)))) {
-        mirrors.push(equalByRotateAndMirrorXY);
+        mirrors.push(solutionRotateAndMirrorXYToString);
     }
 
     return mirrors;
+}
+
+function solutionToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[y][x];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionMirrorXToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[y][xMax - x - 1];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionMirrorYToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[yMax - y - 1][x];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionMirrorXYToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[yMax - y - 1][xMax - x - 1];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionRotateToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[x][y];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionRotateAndMirrorXToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[xMax - x - 1][y];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionRotateAndMirrorYToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[x][yMax - y - 1];
+        }
+        s += '\n';
+    }
+    return s;
+}
+
+function solutionRotateAndMirrorXYToString(solution) {
+    let s = '';
+    const yMax = solution.length;
+    const xMax = solution[0].length;
+
+    for (let y = 0; y < yMax; y++) {
+        for (let x = 0; x < xMax; x++) {
+            s += solution[xMax - x - 1][yMax - y - 1];
+        }
+        s += '\n';
+    }
+    return s;
 }

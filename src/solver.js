@@ -1,5 +1,5 @@
 import {Scene} from "./scene.js";
-import {equalMatrix, passedTime} from "./utils.js";
+import {passedTime} from "./utils.js";
 
 export class Solver {
     xMax;
@@ -11,6 +11,7 @@ export class Solver {
     scene;
     sol;
     sols;
+    solsSet;
 
     constructor({xMax, yMax, columns, rows, mirrors}) {
         this.xMax = xMax;
@@ -26,6 +27,7 @@ export class Solver {
         this.scene = new Scene(this.columns, this.rows);
         this.sol = [];
         this.sols = [];
+        this.solsSet = new Set();
 
         console.log(`\nSparse array filled in ${new Date() - this.startTime} ms.\n`);
         this.routineX();
@@ -86,8 +88,26 @@ export class Solver {
         }
     }
 
-    /* save and print out solution found if it's unique */
     saveSolution() {
+        const solution = this.buildSolution();
+
+        const s = this.mirrors[0](solution);
+        if (this.solsSet.has(s)) {
+            return;
+        }
+
+        this.sols.push(solution);
+
+        this.solsSet.add(s);
+        for (let i = 1; i < this.mirrors.length; i++) {
+            this.solsSet.add(this.mirrors[i](solution));
+        }
+
+        console.log(`\nSolution ${this.sols.length} found in ${passedTime(this.startTime)} s:\n`);
+        this.printSolution(solution);
+    }
+
+    buildSolution() {
         const solution = [];
         for (let y = 0; y < this.yMax; y++) {
             const line = [];
@@ -104,14 +124,7 @@ export class Solver {
             }
         });
 
-        if (!this.isUnique(solution)) {
-            return;
-        }
-
-        this.sols.push(solution);
-
-        console.log(`\nSolution ${this.sols.length} found in ${passedTime(this.startTime)} s:\n`);
-        this.printSolution(solution);
+        return solution;
     }
 
     printSolution(solution) {
@@ -122,28 +135,5 @@ export class Solver {
             }
             console.log(s);
         }
-    }
-
-    isUnique(solution) {
-        for (let i = 0; i < this.sols.length; i++) {
-            if (this.equalSolutions(solution, this.sols[i])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    equalSolutions(newSolution, oldSolution) {
-        if (equalMatrix(newSolution, oldSolution)) {
-            return true;
-        }
-        for (let i = 0; i < this.mirrors.length; i++) {
-            if (this.mirrors[i](newSolution, oldSolution)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
