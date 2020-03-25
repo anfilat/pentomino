@@ -10,6 +10,7 @@ export class Solver {
     startTime;
     scene;
     sol;
+    solution;
     solsCount;
     solsSet;
     printSolution;
@@ -42,6 +43,7 @@ export class Solver {
         this.sol = [];
         this.solsCount = 0;
         this.solsSet = new Set();
+        this.newSolution();
 
         console.log(`\nSparse array filled in ${new Date() - this.startTime} ms.\n`);
         this.routineX();
@@ -103,7 +105,8 @@ export class Solver {
     }
 
     saveSolution() {
-        const solution = this.buildSolution();
+        this.fillSolution();
+        const solution = this.solution;
 
         const s = this.mirrors[0](solution);
         if (this.solsSet.has(s)) {
@@ -119,9 +122,10 @@ export class Solver {
 
         console.log(`\nSolution ${this.solsCount} found in ${passedTime(this.startTime)} s:\n`);
         this.printSolution(solution);
+        this.newSolution();
     }
 
-    buildSolution() {
+    newSolution() {
         const solution = [];
         for (let y = 0; y < this.yMax; y++) {
             const line = [];
@@ -131,13 +135,17 @@ export class Solver {
             solution.push(line);
         }
 
+        this.solution = solution;
+    }
+
+    fillSolution() {
+        const solution = this.solution;
+
         this.sol.forEach(({name, subset}) => {
             for (let i = 1; i < subset.length; i++) {
                 const {x, y} = this.columns[subset[i]];
                 solution[y][x] = name;
             }
         });
-
-        return solution;
     }
 }

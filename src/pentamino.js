@@ -185,113 +185,105 @@ function getMirrors(space) {
 }
 
 function solutionToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[y][x];
+            s.push(solution[y][x]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionMirrorXToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[y][xMax - x - 1];
+            s.push(solution[y][xMax - x - 1]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionMirrorYToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[yMax - y - 1][x];
+            s.push(solution[yMax - y - 1][x]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionMirrorXYToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[yMax - y - 1][xMax - x - 1];
+            s.push(solution[yMax - y - 1][xMax - x - 1]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionRotateToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[x][y];
+            s.push(solution[x][y]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionRotateAndMirrorXToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[xMax - x - 1][y];
+            s.push(solution[xMax - x - 1][y]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionRotateAndMirrorYToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[x][yMax - y - 1];
+            s.push(solution[x][yMax - y - 1]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
 
 function solutionRotateAndMirrorXYToString(solution) {
-    let s = '';
+    const s = [];
     const yMax = solution.length;
     const xMax = solution[0].length;
 
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
-            s += solution[xMax - x - 1][yMax - y - 1];
+            s.push(solution[xMax - x - 1][yMax - y - 1]);
         }
-        s += '\n';
     }
-    return s;
+    return s.join('');
 }
