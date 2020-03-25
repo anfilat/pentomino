@@ -12,6 +12,7 @@ export class Solver {
     sol;
     sols;
     solsSet;
+    printSolution;
 
     constructor({xMax, yMax, columns, rows, mirrors}) {
         this.xMax = xMax;
@@ -21,7 +22,9 @@ export class Solver {
         this.mirrors = mirrors;
     }
 
-    findSolutions() {
+    findSolutions(printSolution) {
+        this.printSolution = printSolution;
+
         this.startTime = new Date();
 
         this.scene = new Scene(this.columns, this.rows);
@@ -125,15 +128,5 @@ export class Solver {
         });
 
         return solution;
-    }
-
-    printSolution(solution) {
-        for (let y = 0; y < this.yMax; y++) {
-            let s = '';
-            for (let x = 0; x < this.xMax; x++) {
-                s += solution[y][x];
-            }
-            console.log(s);
-        }
     }
 }
