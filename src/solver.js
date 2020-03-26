@@ -1,5 +1,4 @@
 import {Scene} from "./scene.js";
-import {passedTime} from "./utils.js";
 
 export class Solver {
     xMax;
@@ -11,7 +10,6 @@ export class Solver {
     scene;
     sol;
     solution;
-    solsCount;
     solsSet;
     printSolution;
     stop;
@@ -24,30 +22,15 @@ export class Solver {
         this.mirrors = mirrors;
     }
 
-    findOneSolution(printSolution) {
+    findSolutions(printSolution, stop) {
         this.printSolution = printSolution;
-        this.stop = () => this.solsCount > 0;
-        this.find();
-    }
-
-    findSolutions(printSolution) {
-        this.printSolution = printSolution;
-        this.stop = () => false;
-        this.find();
-    }
-
-    find() {
-        this.startTime = new Date();
-
+        this.stop = stop;
         this.scene = new Scene(this.columns, this.rows);
         this.sol = [];
-        this.solsCount = 0;
+        this.solution = this.newSolutionMatrix();
         this.solsSet = new Set();
-        this.newSolution();
 
-        console.log(`\nSparse array filled in ${new Date() - this.startTime} ms.\n`);
         this.routineX();
-        console.log(`\nThat's all folks. Ended in ${passedTime(this.startTime)} s.\n`);
     }
 
     routineX() {
@@ -105,7 +88,7 @@ export class Solver {
     }
 
     saveSolution() {
-        this.fillSolution();
+        this.fillSolution(this.solution);
         const solution = this.solution;
 
         const s = this.mirrors[0](solution);
@@ -113,19 +96,15 @@ export class Solver {
             return;
         }
 
-        this.solsCount++;
-
         this.solsSet.add(s);
         for (let i = 1; i < this.mirrors.length; i++) {
             this.solsSet.add(this.mirrors[i](solution));
         }
 
-        console.log(`\nSolution ${this.solsCount} found in ${passedTime(this.startTime)} s:\n`);
-        this.printSolution(solution);
-        this.newSolution();
+        this.returnSolution();
     }
 
-    newSolution() {
+    newSolutionMatrix() {
         const solution = [];
         for (let y = 0; y < this.yMax; y++) {
             const line = [];
@@ -135,17 +114,31 @@ export class Solver {
             solution.push(line);
         }
 
-        this.solution = solution;
+        return solution;
     }
 
-    fillSolution() {
-        const solution = this.solution;
-
+    fillSolution(solution) {
         this.sol.forEach(({name, subset}) => {
             for (let i = 1; i < subset.length; i++) {
                 const {x, y} = this.columns[subset[i]];
                 solution[y][x] = name;
             }
         });
+    }
+
+    returnSolution() {
+        const solution = this.newSolutionMatrix();
+
+        this.sol.forEach(({name, subset}) => {
+            for (let i = 1; i < subset.length; i++) {
+                const {x, y} = this.columns[subset[i]];
+                solution[y][x] = {
+                    id: subset[0],
+                    name,
+                };
+            }
+        });
+
+        this.printSolution(solution);
     }
 }

@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "description": "Pentamino solver",
   "type": "module",
-  "main": "./src/index.js",
   "scripts": {
-    "start": "node ./src/index.js",
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Andrey Filatkin <anfilat@mail.ru>",
   "license": "ISC",
   "devDependencies": {
     "@babel/preset-env": "^7.9.0",
