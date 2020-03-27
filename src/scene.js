@@ -3,19 +3,19 @@ export class Scene {
     #colNum;
     #rowNum;
 
-    constructor(columns, rows) {
+    constructor(columns, rows, areaEqualItems) {
         this.#rowNum = 0;
-        const cols = this._createCols(columns);
+        const cols = this._createCols(columns, areaEqualItems);
         this._insertRows(cols, rows);
     }
 
-    _createCols(columns) {
+    _createCols(columns, areaEqualItems) {
         const cols = [];
 
         let firstColNum = null;
         let lastCol = null;
         for (let i = 0; i < columns.length; i++) {
-            const areaColumn = columns[i] !== null;
+            const areaColumn = areaEqualItems || columns[i] !== null;
             const col = new Col(areaColumn);
             cols.push(col);
 

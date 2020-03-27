@@ -47,6 +47,8 @@ export function prepareData(items, space) {
             columns,
             rows,
             mirrors,
+            itemsArea: itemsCount * figureLength,
+            spaceArea,
         },
         null
     ];

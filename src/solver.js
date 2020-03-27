@@ -3,10 +3,10 @@ import {Scene} from "./scene.js";
 export class Solver {
     xMax;
     yMax;
+    areaEqualItems;
     columns;
     rows;
     mirrors;
-    startTime;
     scene;
     sol;
     solution;
@@ -14,9 +14,10 @@ export class Solver {
     printSolution;
     stop;
 
-    constructor({xMax, yMax, columns, rows, mirrors}) {
+    constructor({xMax, yMax, columns, rows, mirrors, itemsArea, spaceArea}) {
         this.xMax = xMax;
         this.yMax = yMax;
+        this.areaEqualItems = itemsArea === spaceArea;
         this.columns = columns;
         this.rows = rows;
         this.mirrors = mirrors;
@@ -25,7 +26,7 @@ export class Solver {
     findSolutions(printSolution, stop) {
         this.printSolution = printSolution;
         this.stop = stop;
-        this.scene = new Scene(this.columns, this.rows);
+        this.scene = new Scene(this.columns, this.rows, this.areaEqualItems);
         this.sol = [];
         this.solution = this.newSolutionMatrix();
         this.solsSet = new Set();
