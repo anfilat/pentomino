@@ -1,5 +1,6 @@
 import fs from 'fs';
-import {Solver, prepareData, passedTime} from "./src/index.js";
+import chalk from 'chalk';
+import {Solver, prepareData, passedTime, figures} from "./src/index.js";
 
 const argv = process.argv.slice(2);
 
@@ -78,19 +79,29 @@ function printSolution(solution) {
     const yMax = solution.length;
     const xMax = solution[0].length;
 
+    const color = chalk.level === 3 ? bgTrueColor : bgBasicColor;
+
     for (let y = 0; y < yMax; y++) {
         let s = '';
         for (let x = 0; x < xMax; x++) {
             const cell = solution[y][x];
 
             if (typeof cell === 'object') {
-                s += cell.name;
+                s += color(cell.name);
             } else {
-                s += ' ';
+                s += chalk.bgWhiteBright('  ');
             }
         }
         console.log(s);
     }
+}
+
+function bgTrueColor(name) {
+    return chalk.bgHex(figures[name].trueColor)('  ');
+}
+
+function bgBasicColor(name) {
+    return chalk[figures[name].color]('  ');
 }
 
 function printHelp() {

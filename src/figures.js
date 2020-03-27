@@ -48,6 +48,8 @@ export const figures = {
         matrix: [
             [1, 1, 1, 1, 1],
         ],
+        trueColor: '#660000',
+        color: 'bgMagenta',
     },
     N: {
         name: 'N',
@@ -55,6 +57,8 @@ export const figures = {
             [1, 1, 1, 0],
             [0, 0, 1, 1],
         ],
+        trueColor: '#ffff00',
+        color: 'bgYellowBright',
     },
     L: {
         name: 'L',
@@ -62,6 +66,8 @@ export const figures = {
             [1, 1, 1, 1],
             [0, 0, 0, 1],
         ],
+        trueColor: '#994d00',
+        color: 'bgMagentaBright',
     },
     U: {
         name: 'U',
@@ -69,6 +75,8 @@ export const figures = {
             [1, 1, 1],
             [1, 0, 1],
         ],
+        trueColor: '#8000CC',
+        color: 'bgBlue',
     },
     X: {
         name: 'X',
@@ -77,6 +85,8 @@ export const figures = {
             [1, 1, 1],
             [0, 1, 0],
         ],
+        trueColor: '#FF0080',
+        color: 'bgRed',
     },
     W: {
         name: 'W',
@@ -85,6 +95,8 @@ export const figures = {
             [0, 1, 1],
             [0, 0, 1],
         ],
+        trueColor: '#008000',
+        color: 'bgGreen',
     },
     P: {
         name: 'P',
@@ -92,6 +104,8 @@ export const figures = {
             [1, 1, 1],
             [0, 1, 1],
         ],
+        trueColor: '#FF8000',
+        color: 'bgCyanBright',
     },
     F: {
         name: 'F',
@@ -100,6 +114,8 @@ export const figures = {
             [0, 1, 1],
             [0, 1, 0],
         ],
+        trueColor: '#CCCCE6',
+        color: 'bgWhite',
     },
     Z: {
         name: 'Z',
@@ -108,6 +124,8 @@ export const figures = {
             [0, 1, 0],
             [1, 1, 0],
         ],
+        trueColor: '#CCCC00',
+        color: 'bgYellow',
     },
     T: {
         name: 'T',
@@ -116,6 +134,8 @@ export const figures = {
             [0, 1, 0],
             [0, 1, 0],
         ],
+        trueColor: '#FF1A1A',
+        color: 'bgRedBright',
     },
     V: {
         name: 'V',
@@ -124,6 +144,8 @@ export const figures = {
             [1, 0, 0],
             [1, 1, 1],
         ],
+        trueColor: '#00FF00',
+        color: 'bgBlueBright',
     },
     Y: {
         name: 'Y',
@@ -131,5 +153,7 @@ export const figures = {
             [1, 1, 1, 1],
             [0, 0, 1, 0],
         ],
+        trueColor: '#6680E6',
+        color: 'bgGreenBright',
     },
 };
