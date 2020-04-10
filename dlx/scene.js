@@ -3,19 +3,18 @@ export class Scene {
     #colNum;
     #rowNum;
 
-    constructor(columns, rows, areaEqualItems) {
-        this.#rowNum = 0;
-        const cols = this._createCols(columns, areaEqualItems);
+    constructor(columns, rows, areasEqual) {
+        const cols = this._createCols(columns, areasEqual);
         this._insertRows(cols, rows);
     }
 
-    _createCols(columns, areaEqualItems) {
+    _createCols(columns, areasEqual) {
         const cols = [];
 
         let firstColNum = null;
         let lastCol = null;
         for (let i = 0; i < columns.length; i++) {
-            const areaColumn = areaEqualItems || columns[i] !== null;
+            const areaColumn = areasEqual || columns[i] !== null;
             const col = new Col(areaColumn);
             cols.push(col);
 
@@ -45,8 +44,8 @@ export class Scene {
             rowData.subset.forEach(colIndex => {
                 prevNode = new Node(row, cols[colIndex], prevNode);
             });
-            this.#rowNum++;
         });
+        this.#rowNum = rows.length;
     }
 
     noCols() {

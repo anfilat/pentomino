@@ -84,7 +84,3 @@ export function equalMatrix(m1, m2) {
 
     return true;
 }
-
-export function passedTime(startTime) {
-    return (new Date() - startTime) / 1000;
-}

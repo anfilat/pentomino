@@ -3,7 +3,7 @@ import {Scene} from "./scene.js";
 export class Solver {
     xMax;
     yMax;
-    areaEqualItems;
+    areasEqual;
     columns;
     rows;
     mirrors;
@@ -17,7 +17,7 @@ export class Solver {
     constructor({xMax, yMax, columns, rows, mirrors, itemsArea, spaceArea}) {
         this.xMax = xMax;
         this.yMax = yMax;
-        this.areaEqualItems = itemsArea === spaceArea;
+        this.areasEqual = itemsArea === spaceArea;
         this.columns = columns;
         this.rows = rows;
         this.mirrors = mirrors;
@@ -26,7 +26,7 @@ export class Solver {
     findSolutions(printSolution, stop) {
         this.printSolution = printSolution;
         this.stop = stop;
-        this.scene = new Scene(this.columns, this.rows, this.areaEqualItems);
+        this.scene = new Scene(this.columns, this.rows, this.areasEqual);
         this.sol = [];
         this.solution = this.newSolutionMatrix();
         this.solsSet = new Set();
@@ -131,10 +131,11 @@ export class Solver {
         const solution = this.newSolutionMatrix();
 
         this.sol.forEach(({name, subset}) => {
+            const id = subset[0];
             for (let i = 1; i < subset.length; i++) {
                 const {x, y} = this.columns[subset[i]];
                 solution[y][x] = {
-                    id: subset[0],
+                    id,
                     name,
                 };
             }

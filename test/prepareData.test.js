@@ -1,5 +1,5 @@
-import {prepareData} from '../src/pentamino.js';
-import {ErrorAreaGreaterFigures, ErrorAreaIs0, ErrorAreaNotDiv5} from "../src/errors";
+import {prepareData} from '../dlx/pentamino.js';
+import {ErrorAreaGreaterFigures, ErrorAreaIs0, ErrorAreaNotDiv5} from "../dlx/errors";
 
 describe('предварительная обработка входных данных', () => {
     it('возвращает ошибку для пустой области', () => {

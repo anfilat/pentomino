@@ -13,14 +13,15 @@ const figureLength = 5;
 // ячейки, которые должны быть заполнены, обозначаются truthy
 //
 // выходные данные
-// [{columns, rows, mirrors}, ошибка]
+// [{xMax, yMax, columns, rows, mirrors, itemsArea, spaceArea}, ошибка]
 // если для указанных входных данных нет смысла искать решение, то возвращается [null, error]
 // иначе возвращается массив колонок, массив возможных рядов и массив симметрий
-// формат колонки: {x, y}
+// формат колонки: null | {x, y} - какую ячейку представляет эта колонка (null - для колонок с номерами фигур)
 // формат ряда: {figureName, subset: [columnNumber, ...]}
-// если space совпадает с собой при симметричных преобразованиях (горизонтальное отражение, вертикальное, ...)
+// если space совпадает с собой при симметричных преобразованиях (горизонтальное отражение, вертикальное, поворот, ...)
 // то в mirrors содержатся эти преобразования (для определения дублирующих решений)
 export function prepareData(items, space) {
+    items = filterItems(items);
     const itemsCount = calcItemsCount(items);
     const spaceArea = calcSpaceArea(space);
 
@@ -54,17 +55,12 @@ export function prepareData(items, space) {
     ];
 }
 
+function filterItems(items) {
+    return Object.entries(items).filter(([figureName, count]) => figures[figureName] && count > 0);
+}
+
 function calcItemsCount(items) {
-    let area = 0;
-
-    Object.entries(items).forEach(([figureName, count]) => {
-        if (!figures[figureName] || count <= 0) {
-            return;
-        }
-        area += count;
-    });
-
-    return area;
+    return items.reduce((area, [, count]) => area + count, 0);
 }
 
 function calcSpaceArea(space) {
@@ -118,14 +114,12 @@ function createRows(items, checkMatrix) {
     const xMax = checkMatrix[0].length;
     let figureNum = 0;
 
-    Object.entries(items).forEach(([figureName, count]) => {
-        if (!figures[figureName] || count <= 0) {
-            return;
-        }
+    items.forEach(([figureName, count]) => {
+        const variants = variateFigure(figures[figureName]);
         for (let c = 0; c < count; c++) {
             // все варианты расположения одной фигуры с учетом поворотов и смещений
             // повороты
-            variateFigure(figures[figureName]).forEach(({name, matrix}) => {
+            variants.forEach(({name, matrix}) => {
                 const figureYMax = matrix.length;
                 const figureXMax = matrix[0].length;
                 // смещения
@@ -170,16 +164,18 @@ function getMirrors(space) {
     if (equalMatrix(space, mirrorXY(space))) {
         mirrors.push(solutionMirrorXYToString);
     }
-    if (equalMatrix(space, rotate(space))) {
+
+    const rotateSpace = rotate(space);
+    if (equalMatrix(space, rotateSpace)) {
         mirrors.push(solutionRotateToString);
     }
-    if (equalMatrix(space, mirrorX(rotate(space)))) {
+    if (equalMatrix(space, mirrorX(rotateSpace))) {
         mirrors.push(solutionRotateAndMirrorXToString);
     }
-    if (equalMatrix(space, mirrorY(rotate(space)))) {
+    if (equalMatrix(space, mirrorY(rotateSpace))) {
         mirrors.push(solutionRotateAndMirrorYToString);
     }
-    if (equalMatrix(space, mirrorXY(rotate(space)))) {
+    if (equalMatrix(space, mirrorXY(rotateSpace))) {
         mirrors.push(solutionRotateAndMirrorXYToString);
     }
 

@@ -1,32 +1,24 @@
 import {mirrorX, mirrorY, mirrorXY, rotate} from './utils.js';
 
-export function variateFigure({name, matrix}) {
-    const variants = new Set();
+export function variateFigure(figure) {
     const results = [];
+    const variants = new Set();
+    const matrix = figure.matrix;
+    const rotateMatrix = rotate(figure.matrix);
 
-    addVariant(variants, results, name, matrix);
-    addVariant(variants, results, name, mirrorX(matrix));
-    addVariant(variants, results, name, mirrorY(matrix));
-    addVariant(variants, results, name, mirrorXY(matrix));
-    const rotateMatrix = rotate(matrix);
-    addVariant(variants, results, name, rotateMatrix);
-    addVariant(variants, results, name, mirrorX(rotateMatrix));
-    addVariant(variants, results, name, mirrorY(rotateMatrix));
-    addVariant(variants, results, name, mirrorXY(rotateMatrix));
+    [
+        matrix, mirrorX(matrix), mirrorY(matrix), mirrorXY(matrix),
+        rotateMatrix, mirrorX(rotateMatrix), mirrorY(rotateMatrix), mirrorXY(rotateMatrix)
+    ].forEach(matrix => {
+        const newFigure = Object.assign({}, figure, {matrix});
+        const s = figureToString(newFigure);
+        if (!variants.has(s)) {
+            variants.add(s);
+            results.push(newFigure);
+        }
+    });
 
     return results;
-}
-
-function addVariant(variants, results, name, matrix) {
-    const figure = {
-        name,
-        matrix,
-    };
-    const s = figureToString(figure);
-    if (!variants.has(s)) {
-        variants.add(s);
-        results.push(figure);
-    }
 }
 
 function figureToString({matrix}) {
