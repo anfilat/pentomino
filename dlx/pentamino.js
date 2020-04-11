@@ -5,9 +5,7 @@ import {equalMatrix, mirrorX, mirrorY, mirrorXY, rotate} from './utils.js';
 const figureLength = 5;
 
 // входные данные
-// items: {имяФигуры: количествоФигур, ...}
-// если имяФигуры не найдено в списке figures, итем игнорируется
-// если количествоФигур <= 0, итем игнорируется
+// items: [[имяФигуры, количествоФигур], ...]
 // space: [[0, 1, 1, 0, ...],...]
 // двумерный прямоугольный массив, первый индекс - y, второй - x
 // ячейки, которые должны быть заполнены, обозначаются truthy
@@ -21,7 +19,6 @@ const figureLength = 5;
 // если space совпадает с собой при симметричных преобразованиях (горизонтальное отражение, вертикальное, поворот, ...)
 // то в mirrors содержатся эти преобразования (для определения дублирующих решений)
 export function prepareData(items, space) {
-    items = filterItems(items);
     const itemsCount = calcItemsCount(items);
     const spaceArea = calcSpaceArea(space);
 
@@ -53,10 +50,6 @@ export function prepareData(items, space) {
         },
         null
     ];
-}
-
-function filterItems(items) {
-    return Object.entries(items).filter(([figureName, count]) => figures[figureName] && count > 0);
 }
 
 function calcItemsCount(items) {

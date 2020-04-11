@@ -1,4 +1,5 @@
 import fs from "fs";
+import {figures} from "../dlx/index.js";
 
 export function getParams() {
     const argv = process.argv.slice(2);
@@ -26,6 +27,11 @@ export function getParams() {
     if (typeof items === 'number') {
         items = fillItems(items);
     }
+    // с массивом пар [figureName, count] удобнее работать
+    items = Object.entries(items);
+    // если имяФигуры не найдено в списке figures, итем игнорируется
+    // если количествоФигур <= 0, итем игнорируется
+    items = items.filter(([figureName, count]) => figures[figureName] && count > 0);
 
     // в поле space может быть прямоугольная матрица с 0 и 1 для отметки фигуры, которую надо покрыть
     // или размеры этой матрицы (тогда ее надо полностью покрыть)
