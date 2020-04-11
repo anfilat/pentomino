@@ -10,11 +10,12 @@
   "author": "Andrey Filatkin <anfilat@mail.ru>",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.9.0",
     "babel-jest": "^25.1.0",
     "jest": "^25.1.0"
   },
   "dependencies": {
-    "chalk": "^3.0.0"
+    "chalk": "^4.0.0"
   }
 }

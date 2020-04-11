@@ -3,7 +3,7 @@ import {prepareData, Solver} from "./dlx/index.js";
 
 const startTime = new Date();
 
-const {err, findAll, items, space} = getParams();
+const {err, findAll, items, space} = getParams(process.argv.slice(2));
 if (err) {
     printHelp();
     process.exit(1);

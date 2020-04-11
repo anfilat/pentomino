@@ -1,9 +1,7 @@
 import fs from "fs";
 import {figures} from "../dlx/index.js";
 
-export function getParams() {
-    const argv = process.argv.slice(2);
-
+export function getParams(argv) {
     let findAll = false;
     let fileName = argv[0];
     if (argv[0] === '-a') {
