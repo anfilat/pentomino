@@ -62,25 +62,3 @@ export function rotate(matrix) {
 
     return newMatrix;
 }
-
-export function equalMatrix(m1, m2) {
-    const yMax = m1.length;
-    const xMax = m1[0].length;
-
-    if (yMax !== m2.length) {
-        return false;
-    }
-    if (xMax !== m2[0].length) {
-        return false;
-    }
-
-    for (let y = 0; y < yMax; y++) {
-        for (let x = 0; x < xMax; x++) {
-            if (m1[y][x] !== m2[y][x]) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}

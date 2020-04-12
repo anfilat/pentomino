@@ -2,12 +2,7 @@ import fs from "fs";
 import {figures} from "../dlx/index.js";
 
 export function getParams(argv) {
-    let findAll = false;
-    let fileName = argv[0];
-    if (argv[0] === '-a') {
-        findAll = true;
-        fileName = argv[1];
-    }
+    const fileName = argv[0];
     if (!fileName) {
         return {err: true};
     }
@@ -37,7 +32,7 @@ export function getParams(argv) {
         space = fillSpace(space[0], space[1]);
     }
 
-    return {err: false, findAll, items, space};
+    return {err: false, items, space};
 }
 
 function fillItems(count) {

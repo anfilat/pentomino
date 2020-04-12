@@ -6,14 +6,11 @@ describe('нахождение решений', () => {
         const {items, space} = getParams(['./examples/small.json']);
         const [data] = prepareData(items, space);
         let sol;
-        let solsCount = 0;
         new Solver(data)
             .findSolutions(
                 (solution) => {
-                    solsCount++;
                     sol = solution;
-                },
-                () => solsCount > 0
+                }
             );
 
         expect(sol).toEqual([[
@@ -36,14 +33,11 @@ describe('нахождение решений', () => {
         const {items, space} = getParams(['./examples/chess.json']);
         const [data] = prepareData(items, space);
         let sol;
-        let solsCount = 0;
         new Solver(data)
             .findSolutions(
                 (solution) => {
-                    solsCount++;
                     sol = solution;
-                },
-                () => solsCount > 0
+                }
             );
 
         const yMax = space.length;
@@ -58,7 +52,7 @@ describe('нахождение решений', () => {
             for (let x = 0; x < xMax; x++) {
                 const cell = sol[y][x];
 
-                if (typeof cell === 'object') {
+                if (cell != null) {
                     expect(space[y][x]).toBeTruthy();
                 } else {
                     expect(space[y][x]).toBeFalsy();
@@ -72,7 +66,7 @@ describe('нахождение решений', () => {
             for (let x = 0; x < xMax; x++) {
                 const cell = sol[y][x];
 
-                if (typeof cell === 'object') {
+                if (cell != null) {
                     const name = cell.name;
                     const count = figures[name] || 0;
                     figures[name] = count + 1;
@@ -80,20 +74,5 @@ describe('нахождение решений', () => {
             }
         }
         expect(figures).toEqual({"I": 5, "N": 5, "L": 5, "U": 5, "X": 5, "W": 5, "P": 5, "F": 5, "Z": 5, "T": 5, "V": 5, "Y": 5});
-    });
-
-    it('находит все решения', () => {
-        const {items, space} = getParams(['-a', './examples/small.json']);
-        const [data] = prepareData(items, space);
-        let solsCount = 0;
-        new Solver(data)
-            .findSolutions(
-                () => {
-                    solsCount++;
-                },
-                () => false
-            );
-
-        expect(solsCount).toEqual(2);
     });
 });

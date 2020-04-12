@@ -26,7 +26,7 @@ function printByUniqueColors(solution) {
         for (let x = 0; x < xMax; x++) {
             const cell = solution[y][x];
 
-            if (typeof cell === 'object') {
+            if (cell != null) {
                 s += draw(figures[cell.name]);
             } else {
                 s += drawBlank();
@@ -51,7 +51,7 @@ function buildGraph(solution) {
     for (let y = 0; y < yMax; y++) {
         for (let x = 0; x < xMax; x++) {
             const cell = solution[y][x];
-            if (typeof cell === 'object') {
+            if (cell != null) {
                 const id = cell.id;
                 let item = items.get(id);
                 if (!item) {
@@ -71,7 +71,7 @@ function buildGraph(solution) {
     function addNeighbour(item, id, y, x) {
         if (y >= 0 && y < yMax && x >= 0 && x < xMax) {
             const cell = solution[y][x];
-            if (typeof cell === 'object' && cell.id !== id) {
+            if (cell != null && cell.id !== id) {
                 item.add(cell.id);
             }
         }
@@ -116,7 +116,7 @@ function printByStandardColors(solution, color) {
         for (let x = 0; x < xMax; x++) {
             const cell = solution[y][x];
 
-            if (typeof cell === 'object') {
+            if (cell != null) {
                 s += drawByStandardColor(standardColors[color.get(cell.id)]);
             } else {
                 s += drawBlank();
