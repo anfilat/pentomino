@@ -1,5 +1,3 @@
-import {Worker} from 'worker_threads';
-import os from 'os';
 import {Scene} from "./scene.js";
 
 export class Solver {
@@ -8,6 +6,10 @@ export class Solver {
     areasEqual;
     columns;
     rows;
+    scene;
+    sol;
+    isSolution;
+    printSolution;
 
     constructor({xMax, yMax, columns, rows, itemsArea, spaceArea}) {
         this.xMax = xMax;
@@ -17,81 +19,73 @@ export class Solver {
         this.rows = rows;
     }
 
-    async findSolution() {
-        const tasks = this.getTasks();
-        const sol = await this.getSolution(tasks);
-        return sol ? this.fillSolution(sol) : null;
+    findSolutions(printSolution) {
+        this.printSolution = printSolution;
+        this.scene = new Scene(this.columns, this.rows, this.areasEqual);
+        this.sol = [];
+        this.isSolution = false;
+
+        this.routineX();
     }
 
-    getTasks() {
-        const scene = new Scene(this.columns, this.rows, this.areasEqual);
-        const mc = scene.selectCol();
+    routineX() {
+        if (this.scene.noCols()) {
+            this.saveSolution();
+            return;
+        }
+        if (this.scene.noRows()) {
+            return;
+        }
+        const mc = this.scene.selectCol();
         if (mc.length === 0) {
             return;
         }
 
-        const tasks = [];
-        let rowNum = 0;
+        const rowStack = [];
+        const colStack = [];
         let fall = mc.head;
         do {
-            // с какого ряда стартовать поиск решения
-            tasks.push(rowNum);
-            rowNum++;
+            this.sol.push(fall.row);
+            this.remove(rowStack, colStack, fall);
+            this.routineX();
+            if (this.isSolution) {
+                return;
+            }
+            this.restore(rowStack, colStack);
+            this.sol.pop();
+
             fall = fall.down;
         } while (fall !== mc.head);
-
-        return tasks;
     }
 
-    async getSolution(tasks) {
-        return new Promise(resolve => {
-            const workerData = {
-                xMax: this.xMax,
-                yMax: this.yMax,
-                columns: this.columns,
-                rows: this.rows,
-                areasEqual: this.areasEqual
-            };
-            const size = os.cpus().length - 1;
-            const workers = new Set();
-            let ind = 0;
-
-            for (let i = 0; i < size; i++) {
-                const worker = new Worker('./dlx/solverThread.js', {workerData});
-
-                worker.on('message', message => {
-                    const name = message.name;
-
-                    if (name === 'ready') {
-                        if (ind < tasks.length) {
-                            const data = tasks[ind];
-                            ind++;
-                            worker.postMessage({name: 'work', data});
-                        } else {
-                            worker.postMessage({name: 'exit'});
-                        }
-                    }
-                    if (name === 'result') {
-                        workers.forEach(worker => worker.terminate());
-                        resolve(message.data);
-                    }
-                });
-                worker.on('exit', () => {
-                    workers.delete(worker);
-                    if (workers.size === 0) {
-                        resolve();
-                    }
-                });
-
-                workers.add(worker);
+    remove(rowStack, colStack, fall) {
+        let slide = fall;
+        do {
+            let deleter = slide.down;
+            while (deleter !== slide) {
+                rowStack.push(this.scene.removeRow(deleter));
+                deleter = deleter.down;
             }
-        });
+            colStack.push(slide.col);
+            slide = slide.right;
+        } while (slide !== fall);
+        rowStack.push(this.scene.removeRow(fall));
+        colStack.forEach(col => this.scene.removeCol(col));
     }
 
-    fillSolution(sol) {
-        const solution = this.makeSolutionMatrix();
+    restore(rowStack, colStack) {
+        while (colStack.length > 0) {
+            this.scene.restoreCol(colStack.pop());
+        }
+        while (rowStack.length > 0) {
+            this.scene.restoreRow(rowStack.pop());
+        }
+    }
 
-        sol.forEach(({name, subset}) => {
+    saveSolution() {
+        const solution = this.newSolutionMatrix();
+
+        this.sol.forEach(({name, subset}) => {
             const id = subset[0];
             for (let i = 1; i < subset.length; i++) {
                 const {x, y} = this.columns[subset[i]];
@@ -102,10 +96,11 @@ export class Solver {
             }
         });
 
-        return solution;
+        this.printSolution(solution);
+        this.isSolution = true;
     }
 
-    makeSolutionMatrix() {
+    newSolutionMatrix() {
         const solution = [];
         for (let y = 0; y < this.yMax; y++) {
             const line = [];
