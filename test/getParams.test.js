@@ -1,4 +1,5 @@
-import {getParams, isItemsUnique} from "../cliSrc/index.js";
+import {getParams} from "../cliSrc/index.js";
+import {isItemsUnique} from "../dlx/index.js";
 
 describe('получение входных данных', () => {
     it('возвращает ошибку при отсутствии параметров', () => {

@@ -57,7 +57,3 @@ function fillSpace(yMax, xMax) {
     }
     return space;
 }
-
-export function isItemsUnique(items) {
-    return items.every(([, count]) => count === 1);
-}
