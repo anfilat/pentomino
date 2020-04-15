@@ -1,4 +1,5 @@
 <script>
+	import Button, {Label} from '@smui/button';
 	import {prepareData, Solver, isItemsUnique} from "../dlx/index.js";
 
 	const items = [["I", 1], ["N", 1], ["L", 1], ["U", 1], ["X", 1], ["W", 1], ["P", 1], ["F", 1], ["Z", 1], ["T", 1], ["V", 1], ["Y", 1]];
@@ -28,6 +29,6 @@
 	}
 </script>
 
-<button on:click={handleClick}>
-	Кликни по мне
-</button>
+<Button variant="raised" on:click={handleClick}>
+	<Label>Кликни по мне</Label>
+</Button>
