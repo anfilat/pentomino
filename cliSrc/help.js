@@ -1,7 +1,7 @@
 export function printHelp() {
     const s = `
 Pentamino solver. Usage:
-node cli fileName.json
+node cli [-a] fileName.json
   fileName.json values
     items: number | {I: 1, Y: 2, ...} for any of INLUXWPFZTVY
     space: [height, width] | [[0, 1,...]...]

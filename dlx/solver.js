@@ -6,24 +6,30 @@ export class Solver {
     areasEqual;
     columns;
     rows;
+    mirrors;
     scene;
     sol;
-    isSolution;
+    solution;
+    solsSet;
     printSolution;
+    stop;
 
-    constructor({xMax, yMax, columns, rows, itemsArea, spaceArea}) {
+    constructor({xMax, yMax, columns, rows, mirrors, itemsArea, spaceArea}) {
         this.xMax = xMax;
         this.yMax = yMax;
         this.areasEqual = itemsArea === spaceArea;
         this.columns = columns;
         this.rows = rows;
+        this.mirrors = mirrors;
     }
 
-    findSolutions(printSolution) {
+    findSolutions(printSolution, stop) {
         this.printSolution = printSolution;
+        this.stop = stop;
         this.scene = new Scene(this.columns, this.rows, this.areasEqual);
         this.sol = [];
-        this.isSolution = false;
+        this.solution = this.newSolutionMatrix();
+        this.solsSet = new Set();
 
         this.routineX();
     }
@@ -48,7 +54,7 @@ export class Solver {
             this.sol.push(fall.row);
             this.remove(rowStack, colStack, fall);
             this.routineX();
-            if (this.isSolution) {
+            if (this.stop()) {
                 return;
             }
             this.restore(rowStack, colStack);
@@ -83,6 +89,45 @@ export class Solver {
     }
 
     saveSolution() {
+        this.fillSolution(this.solution);
+        const solution = this.solution;
+
+        const s = this.mirrors[0](solution);
+        if (this.solsSet.has(s)) {
+            return;
+        }
+
+        this.solsSet.add(s);
+        for (let i = 1; i < this.mirrors.length; i++) {
+            this.solsSet.add(this.mirrors[i](solution));
+        }
+
+        this.returnSolution();
+    }
+
+    newSolutionMatrix() {
+        const solution = [];
+        for (let y = 0; y < this.yMax; y++) {
+            const line = [];
+            for (let x = 0; x < this.xMax; x++) {
+                line.push(' ');
+            }
+            solution.push(line);
+        }
+
+        return solution;
+    }
+
+    fillSolution(solution) {
+        this.sol.forEach(({name, subset}) => {
+            for (let i = 1; i < subset.length; i++) {
+                const {x, y} = this.columns[subset[i]];
+                solution[y][x] = name;
+            }
+        });
+    }
+
+    returnSolution() {
         const solution = this.newSolutionMatrix();
 
         this.sol.forEach(({name, subset}) => {
@@ -97,19 +142,5 @@ export class Solver {
         });
 
         this.printSolution(solution);
-        this.isSolution = true;
-    }
-
-    newSolutionMatrix() {
-        const solution = [];
-        for (let y = 0; y < this.yMax; y++) {
-            const line = [];
-            for (let x = 0; x < this.xMax; x++) {
-                line.push(null);
-            }
-            solution.push(line);
-        }
-
-        return solution;
     }
 }
