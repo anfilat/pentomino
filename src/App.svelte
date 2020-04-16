@@ -166,7 +166,7 @@
 		<div></div>
 		<div></div>
 		<div class:nocorrect="{!allValueCorrect}">
-			<NumberField bind:value={$all} label="all" min="0" max="10" />
+			<NumberField bind:value={$all} label="all" min="0" max="100" />
 		</div>
 	</div>
 	<div class="options-line">
