@@ -5,3 +5,8 @@
 @import "@material/typography/mdc-typography";
 @import "smui-theme";
 @import "@material/theme/mdc-theme";
+
+.custom.mdc-text-field--outlined .mdc-text-field__input {
+  padding-top: 15px;
+  padding-bottom: 0;
+}
