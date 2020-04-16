@@ -3,6 +3,7 @@
 	import LinearProgress from '@smui/linear-progress';
 	import NumberField from './components/NumberField.svelte';
 	import {valueStore} from './utils/valueStore';
+	import {printSolution} from './utils/output';
 	import {prepareData, Solver, isItemsUnique} from "../dlx/index.js";
 
 	let space = [
@@ -15,6 +16,7 @@
 		[1, 1, 1, 1, 1, 1, 1, 1],
 		[1, 1, 1, 1, 1, 1, 1, 1]
 	];
+	let solution = null;
 	const width = valueStore(8, createSpace);
 	const height = valueStore(8, createSpace);
 
@@ -56,6 +58,7 @@
 			}
 			space.push(line);
 		}
+		solution = null;
 	}
 
 	function onChangeAll(value) {
@@ -74,17 +77,20 @@
 		figureY.set(value);
 		bunchChange = false;
 		allValueCorrect = true;
+		solution = null;
 	}
 
 	function checkAllValueCorrect() {
 		if (!bunchChange) {
 			const items = getItems();
 			allValueCorrect = items.every(([, count]) => count == $all);
+			solution = null;
 		}
 	}
 
 	function onCellClick(x, y) {
 		space[y][x] = space[y][x] ? 0 : 1;
+		solution = null;
 	}
 
 	function clearAll() {
@@ -94,6 +100,7 @@
 			}
 		});
 		space = space;
+		solution = null;
 	}
 
 	function fillAll() {
@@ -103,9 +110,12 @@
 			}
 		});
 		space = space;
+		solution = null;
 	}
 
 	function onStartStop() {
+		solution = null;
+
 		const items = getItems();
 		const [data, error] = prepareData(items, space);
 		dataError = error;
@@ -118,9 +128,9 @@
 		const solver = new Solver(data);
 		let isSolution = false;
 		solver.findSolutions(
-			(solution) => {
+			(sol) => {
 				isSolution = true;
-				console.log(solution);
+				solution = printSolution(sol, itemsUnique);
 			},
 			() => isSolution
 		);
@@ -198,19 +208,34 @@
 
 <div class="space">
 	<div class="space_internal">
-		{#each space as line, y}
-			<div class="space_line">
-				{#each line as cell, x}
-					<div
-						on:click={() => onCellClick(x, y)}
-						class="space_cell"
-						class:empty_cell={!cell}
-						style="width: {cellSize}px; height: {cellSize}px;"
-					>
-					</div>
-				{/each}
-			</div>
-		{/each}
+		{#if solution}
+			{#each solution as line, y}
+				<div class="space_line">
+					{#each line as cell, x}
+						<div
+							on:click={() => onCellClick(x, y)}
+							class="space_cell"
+							style="width: {cellSize}px; height: {cellSize}px; background: {cell == null ? '#ffffff' : cell};"
+						>
+						</div>
+					{/each}
+				</div>
+			{/each}
+		{:else}
+			{#each space as line, y}
+				<div class="space_line">
+					{#each line as cell, x}
+						<div
+							on:click={() => onCellClick(x, y)}
+							class="space_cell"
+							class:empty_cell={!cell}
+							style="width: {cellSize}px; height: {cellSize}px;"
+						>
+						</div>
+					{/each}
+				</div>
+			{/each}
+		{/if}
 	</div>
 </div>
 
@@ -223,12 +248,6 @@
 		display: flex;
 		justify-content: center;
 		margin-bottom: 10px;
-	}
-	.options-line > :global(*) {
-		width: 95px;
-	}
-	.options-line > :global(*) :global(input) {
-		width: 95px;
 	}
 	.options-line > :global(*:not(:last-child)) {
 		margin-right: 10px;
