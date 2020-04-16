@@ -1,7 +1,7 @@
 export class Scene {
-    #cPtr;
-    #colNum;
-    #rowNum;
+    cPtr;
+    colNum;
+    rowNum;
 
     constructor(columns, rows, areasEqual) {
         const cols = this._createCols(columns, areasEqual);
@@ -32,8 +32,8 @@ export class Scene {
         cols[firstColNum].left = cols[cols.length - 1];
         cols[cols.length - 1].right = cols[firstColNum];
 
-        this.#cPtr = cols[firstColNum];
-        this.#colNum = cols.length - firstColNum;
+        this.cPtr = cols[firstColNum];
+        this.colNum = cols.length - firstColNum;
         return cols;
     }
 
@@ -45,23 +45,23 @@ export class Scene {
                 prevNode = new Node(row, cols[colIndex], prevNode);
             });
         });
-        this.#rowNum = rows.length;
+        this.rowNum = rows.length;
     }
 
     noCols() {
-        return this.#colNum === 0;
+        return this.colNum === 0;
     }
 
     noRows() {
-        return this.#rowNum === 0;
+        return this.rowNum === 0;
     }
 
     // select column with minimal number of elements
     selectCol() {
-        let mc = this.#cPtr;
-        let min = this.#cPtr.length;
-        let col = this.#cPtr.right;
-        while (col !== this.#cPtr) {
+        let mc = this.cPtr;
+        let min = this.cPtr.length;
+        let col = this.cPtr.right;
+        while (col !== this.cPtr) {
             if (col.length < min) {
                 mc = col;
                 min = col.length;
@@ -82,13 +82,13 @@ export class Scene {
         if (col.areaColumn) {
             col.left.right = col.right;
             col.right.left = col.left;
-            if (this.#cPtr === col) {
-                this.#cPtr = col.right;
+            if (this.cPtr === col) {
+                this.cPtr = col.right;
                 col.restoreCPtr = true;
             } else {
                 col.restoreCPtr = false;
             }
-            this.#colNum--;
+            this.colNum--;
         }
     }
 
@@ -104,9 +104,9 @@ export class Scene {
             col.left.right = col;
             col.right.left = col;
             if (col.restoreCPtr) {
-                this.#cPtr = col;
+                this.cPtr = col;
             }
-            this.#colNum++;
+            this.colNum++;
         }
     }
 
@@ -118,7 +118,7 @@ export class Scene {
                 delNode = delNode.right;
             } while (delNode !== node);
         }
-        this.#rowNum--;
+        this.rowNum--;
         return node;
     }
 
@@ -130,7 +130,7 @@ export class Scene {
                 restNode = restNode.right;
             } while (restNode !== node);
         }
-        this.#rowNum++;
+        this.rowNum++;
     }
 }
 
