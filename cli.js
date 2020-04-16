@@ -11,7 +11,7 @@ if (err) {
 
 const [data, error] = prepareData(items, space);
 if (error) {
-    console.log(error.message);
+    console.log('Error:', error.message);
     process.exit(1);
 }
 

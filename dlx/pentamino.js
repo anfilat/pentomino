@@ -23,13 +23,13 @@ export function prepareData(items, space) {
     const spaceArea = calcSpaceArea(space);
 
     if (spaceArea === 0) {
-        return [null, new ErrorAreaIs0];
+        return [null, ErrorAreaIs0];
     }
     if (spaceArea > itemsCount * figureLength) {
-        return [null, new ErrorAreaGreaterFigures];
+        return [null, ErrorAreaGreaterFigures];
     }
     if (spaceArea % figureLength !== 0) {
-        return [null, new ErrorAreaNotDiv5];
+        return [null, ErrorAreaNotDiv5];
     }
 
     const yMax = space.length;

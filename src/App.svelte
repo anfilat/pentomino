@@ -1,5 +1,6 @@
 <script>
 	import Button, {Label} from '@smui/button';
+	import LinearProgress from '@smui/linear-progress';
 	import NumberField from './components/NumberField.svelte';
 	import {valueStore} from './utils/valueStore';
 	import {prepareData, Solver, isItemsUnique} from "../dlx/index.js";
@@ -33,6 +34,18 @@
 	const figureV = valueStore(1, checkAllValueCorrect);
 	const figureY = valueStore(1, checkAllValueCorrect);
 	let dataError;
+	let waitAnswer = false;
+
+	let windowWidth = 0;
+	let windowHeight = 0;
+	let optionsHeight = 0;
+	let widthOnCell;
+	let heightOnCell;
+	let cellSize;
+
+	$: widthOnCell = (windowWidth - 16) / $width - 1;
+	$: heightOnCell = (windowHeight - 16 - optionsHeight - 10) / $height - 1;
+	$: cellSize = Math.min(40, Math.max(20, Math.min(widthOnCell, heightOnCell)));
 
 	function createSpace() {
 		space = [];
@@ -74,6 +87,24 @@
 		space[y][x] = space[y][x] ? 0 : 1;
 	}
 
+	function clearAll() {
+		space.forEach(line => {
+			for (let i = 0; i < line.length; i++) {
+				line[i] = 0;
+			}
+		});
+		space = space;
+	}
+
+	function fillAll() {
+		space.forEach(line => {
+			for (let i = 0; i < line.length; i++) {
+				line[i] = 1;
+			}
+		});
+		space = space;
+	}
+
 	function onStartStop() {
 		const items = getItems();
 		const [data, error] = prepareData(items, space);
@@ -81,6 +112,8 @@
 		if (error) {
 			return;
 		}
+
+		waitAnswer = true;
 		const itemsUnique = isItemsUnique(items);
 		const solver = new Solver(data);
 		let isSolution = false;
@@ -91,6 +124,7 @@
 			},
 			() => isSolution
 		);
+		waitAnswer = false;
 	}
 
 	function getItems() {
@@ -111,45 +145,68 @@
 	}
 </script>
 
-<div class="flex options-line">
-	<NumberField bind:value={$width} label="width" min="1" max="100" />
-	<NumberField bind:value={$height} label="height" min="1" max="100" />
-	<div class:nocorrect="{!allValueCorrect}">
-		<NumberField bind:value={$all} label="all" min="0" max="10" />
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight}/>
+
+<LinearProgress indeterminate closed="{!waitAnswer}"/>
+<div class="options" bind:clientHeight={optionsHeight}>
+	<div class="options-line">
+		<NumberField bind:value={$width} label="width" min="1" max="100" />
+		<NumberField bind:value={$height} label="height" min="1" max="100" />
+		<div></div>
+		<div></div>
+		<div></div>
+		<div class:nocorrect="{!allValueCorrect}">
+			<NumberField bind:value={$all} label="all" min="0" max="10" />
+		</div>
 	</div>
-</div>
-<div class="flex options-line">
-	<NumberField bind:value={$figureI} label="I" min="0" max="999" />
-	<NumberField bind:value={$figureN} label="N" min="0" max="999" />
-	<NumberField bind:value={$figureL} label="L" min="0" max="999" />
-	<NumberField bind:value={$figureU} label="U" min="0" max="999" />
-	<NumberField bind:value={$figureX} label="X" min="0" max="999" />
-	<NumberField bind:value={$figureW} label="W" min="0" max="999" />
-</div>
-<div class="flex options-line">
-	<NumberField bind:value={$figureP} label="P" min="0" max="999" />
-	<NumberField bind:value={$figureF} label="F" min="0" max="999" />
-	<NumberField bind:value={$figureZ} label="Z" min="0" max="999" />
-	<NumberField bind:value={$figureT} label="T" min="0" max="999" />
-	<NumberField bind:value={$figureV} label="V" min="0" max="999" />
-	<NumberField bind:value={$figureY} label="v" min="0" max="999" />
+	<div class="options-line">
+		<NumberField bind:value={$figureI} label="I" min="0" max="999" />
+		<NumberField bind:value={$figureN} label="N" min="0" max="999" />
+		<NumberField bind:value={$figureL} label="L" min="0" max="999" />
+		<NumberField bind:value={$figureU} label="U" min="0" max="999" />
+		<NumberField bind:value={$figureX} label="X" min="0" max="999" />
+		<NumberField bind:value={$figureW} label="W" min="0" max="999" />
+	</div>
+	<div class="options-line">
+		<NumberField bind:value={$figureP} label="P" min="0" max="999" />
+		<NumberField bind:value={$figureF} label="F" min="0" max="999" />
+		<NumberField bind:value={$figureZ} label="Z" min="0" max="999" />
+		<NumberField bind:value={$figureT} label="T" min="0" max="999" />
+		<NumberField bind:value={$figureV} label="V" min="0" max="999" />
+		<NumberField bind:value={$figureY} label="v" min="0" max="999" />
+	</div>
+	<div class="options-line">
+		<Button variant="raised" on:click={clearAll}>
+			<Label>Clear All</Label>
+		</Button>
+		<Button variant="raised" on:click={fillAll}>
+			<Label>Fill All</Label>
+		</Button>
+		<div></div>
+		<div></div>
+		<div></div>
+		<Button variant="raised" on:click={onStartStop}>
+			<Label>{waitAnswer ? 'Stop' : 'Start'}</Label>
+		</Button>
+	</div>
+	{#if dataError}
+		<div class="error-line">
+			<div class="error">{dataError}</div>
+		</div>
+	{/if}
 </div>
 
-<Button variant="raised" on:click={onStartStop}>
-	<Label>Start</Label>
-</Button>
-{#if dataError}
-	<div>{dataError}</div>
-{/if}
 <div class="space">
-	<div class="space-internal">
+	<div class="space_internal">
 		{#each space as line, y}
 			<div class="space_line">
 				{#each line as cell, x}
 					<div
 						on:click={() => onCellClick(x, y)}
 						class="space_cell"
-						class:empty_cell={!cell}>
+						class:empty_cell={!cell}
+						style="width: {cellSize}px; height: {cellSize}px;"
+					>
 					</div>
 				{/each}
 			</div>
@@ -158,10 +215,27 @@
 </div>
 
 <style>
-	.flex {
-		display: flex;
+	.options {
+		margin-top: 8px;
+		margin-bottom: 10px;
 	}
 	.options-line {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 10px;
+	}
+	.options-line > :global(*) {
+		width: 95px;
+	}
+	.options-line > :global(*) :global(input) {
+		width: 95px;
+	}
+	.options-line > :global(*:not(:last-child)) {
+		margin-right: 10px;
+	}
+	.error-line {
+		display: flex;
+		justify-content: center;
 		margin-bottom: 10px;
 	}
 	.nocorrect {
@@ -171,7 +245,7 @@
 		display: flex;
 		justify-content: center;
 	}
-	.space-internal {
+	.space_internal {
 		flex-grow: 0;
 		background: #333333;
 	}
@@ -182,8 +256,6 @@
 		margin-bottom: 1px;
 	}
 	.space_cell {
-		width: 20px;
-		height: 20px;
 		background: #888888;
 		cursor: pointer;
 	}
@@ -192,5 +264,8 @@
 	}
 	.empty_cell {
 		background-color: #ffffff;
+	}
+	.error {
+		color: #b71c1c;
 	}
 </style>
