@@ -54,12 +54,12 @@ function printByMinColors(solution) {
 }
 
 const standardColors = {
-    0: 'bgGreenBright',
-    1: 'bgYellowBright',
-    2: 'bgRedBright',
-    3: 'bgBlue',
-    4: 'bgCyanBright',
-    5: 'bgWhite',
-    6: 'bgMagenta',
-    7: 'bgYellow',
+    0: '#8ae234',
+    1: '#fce94f',
+    2: '#ef2929',
+    3: '#3465a4',
+    4: '#34e2e2',
+    5: '#CCCCE6',
+    6: '#FF0080',
+    7: '#888800',
 };
