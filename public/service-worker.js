@@ -1,10 +1,10 @@
 const cacheName = 'cache-' + Date.now();
 const filesToCache = [
-    '/index.html',
-    '/global.css',
-    '/build/bundle.css',
-    '/build/bundle.js',
-    '/build/worker.js',
+    './index.html',
+    './global.css',
+    './build/bundle.css',
+    './build/bundle.js',
+    './build/worker.js',
 ];
 self.addEventListener("install", function (event) {
     event.waitUntil(
