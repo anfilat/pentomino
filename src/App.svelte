@@ -20,11 +20,10 @@
 	];
 	let solution = null;
 
+	let bunchChange = false;
 	const selectPreset = valueStore('', onChangePreset);
 	const width = valueStore(8, createSpace);
 	const height = valueStore(8, createSpace);
-
-	let bunchChange = false;
 	let allValueCorrect = true;
 	const all = valueStore(1, onChangeAll);
 	const figureI = valueStore(1, checkAllValueCorrect);

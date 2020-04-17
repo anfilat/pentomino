@@ -1,5 +1,6 @@
+import {figures} from '../common/index.js';
 import {ErrorAreaNotDiv5, ErrorAreaIs0, ErrorAreaGreaterFigures} from './errors.js';
-import {variateFigure, figures} from './figures.js';
+import {variateFigure} from './figures.js';
 import {equalMatrix, mirrorX, mirrorY, mirrorXY, rotate} from './utils.js';
 
 const figureLength = 5;

@@ -1,4 +1,4 @@
-import {figures, assignColors} from "../../dlx";
+import {figures, assignColors} from "../../common";
 
 export function printSolution(solution, itemsUnique) {
     if (itemsUnique) {

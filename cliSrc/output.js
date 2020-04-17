@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import {figures, assignColors} from "../dlx/index.js";
+import {figures, assignColors} from "../common/index.js";
 
 const draw = chalk.level === 3 ? drawByTrueColor : drawByBasicColor;
 
