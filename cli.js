@@ -1,5 +1,6 @@
 import {getParams, printHelp, printSolution, passedTime} from "./cliSrc/index.js";
-import {prepareData, Solver, isItemsUnique} from "./dlx/index.js";
+import {prepareData, Solver} from "./dlx/index.js";
+import {isItemsUnique} from "./common/index.js";
 
 const startTime = new Date();
 

@@ -1,10 +1,12 @@
 <script>
 	import Button, {Label} from '@smui/button';
+	import Select, {Option} from '@smui/select';
 	import LinearProgress from '@smui/linear-progress';
 	import NumberField from './components/NumberField.svelte';
 	import {valueStore} from './code/valueStore';
-	import {isItemsUnique} from "../dlx";
 	import {printSolution} from './code/output';
+	import {presets} from './code/presets';
+	import {isItemsUnique, fillItems, prepareSpace} from "../common";
 
 	let space = [
 		[1, 1, 1, 1, 1, 1, 1, 1],
@@ -17,6 +19,8 @@
 		[1, 1, 1, 1, 1, 1, 1, 1]
 	];
 	let solution = null;
+
+	const selectPreset = valueStore('', onChangePreset);
 	const width = valueStore(8, createSpace);
 	const height = valueStore(8, createSpace);
 
@@ -49,7 +53,50 @@
 	$: heightOnCell = (windowHeight - 16 - optionsHeight - 10) / $height - 1;
 	$: cellSize = Math.min(40, Math.max(20, Math.min(widthOnCell, heightOnCell)));
 
+	function onChangePreset(value) {
+		if (value) {
+			const preset = presets.find(({name}) => name === value);
+
+			bunchChange = true;
+			space = prepareSpace(preset.space);
+			height.set(space.length);
+			width.set(space[0].length);
+
+			let items = preset.items;
+			if (typeof items === 'number') {
+				items = fillItems(items);
+			}
+
+			figureI.set(items.I || 0);
+			figureN.set(items.N || 0);
+			figureL.set(items.L || 0);
+			figureU.set(items.U || 0);
+			figureX.set(items.X || 0);
+			figureW.set(items.W || 0);
+			figureP.set(items.P || 0);
+			figureF.set(items.F || 0);
+			figureZ.set(items.Z || 0);
+			figureT.set(items.T || 0);
+			figureV.set(items.V || 0);
+			figureY.set(items.Y || 0);
+
+			if (getItems().every(([, count]) => count == $figureI)) {
+				all.set($figureI);
+				allValueCorrect = true;
+			} else {
+				allValueCorrect = false;
+			}
+			solution = null;
+			bunchChange = false;
+
+			selectPreset.set('');
+		}
+	}
+
 	function createSpace() {
+		if (bunchChange) {
+			return;
+		}
 		space = [];
 		for (let y = 0; y < $height; y++) {
 			const line = [];
@@ -62,6 +109,9 @@
 	}
 
 	function onChangeAll(value) {
+		if (bunchChange) {
+			return;
+		}
 		bunchChange = true;
 		figureI.set(value);
 		figureN.set(value);
@@ -81,11 +131,12 @@
 	}
 
 	function checkAllValueCorrect() {
-		if (!bunchChange) {
-			const items = getItems();
-			allValueCorrect = items.every(([, count]) => count == $all);
-			solution = null;
+		if (bunchChange) {
+			return;
 		}
+		const items = getItems();
+		allValueCorrect = items.every(([, count]) => count == $all);
+		solution = null;
 	}
 
 	function onCellClick(x, y) {
@@ -173,6 +224,15 @@
 <LinearProgress indeterminate closed="{!waitAnswer}"/>
 <div class="options" bind:clientHeight={optionsHeight}>
 	<div class="options-line">
+		<Select variant="outlined" bind:value={$selectPreset} label="Presets" class="custom">
+			<Option value=""></Option>
+			{#each presets as preset}
+				<Option value={preset}>{preset.name}</Option>
+			{/each}
+		</Select>
+		<div></div>
+		<div></div>
+		<div></div>
 		<NumberField bind:value={$width} label="width" min="1" max="100" disabled="{waitAnswer}"/>
 		<NumberField bind:value={$height} label="height" min="1" max="100" disabled="{waitAnswer}"/>
 		<div></div>

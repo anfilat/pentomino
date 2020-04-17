@@ -10,7 +10,7 @@ const production = !process.env.ROLLUP_WATCH;
 export default [{
 	input: 'src/main.js',
 	output: {
-		sourcemap: production,
+		sourcemap: !production,
 		format: 'iife',
 		name: 'app',
 		file: 'public/build/bundle.js'
@@ -69,7 +69,7 @@ export default [{
 }, {
 	input: 'src/code/worker.js',
 	output: {
-		sourcemap: production,
+		sourcemap: !production,
 		format: 'iife',
 		file: 'public/build/worker.js'
 	},

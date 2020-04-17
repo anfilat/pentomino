@@ -84,7 +84,3 @@ export function equalMatrix(m1, m2) {
 
     return true;
 }
-
-export function isItemsUnique(items) {
-    return items.every(([, count]) => count === 1);
-}
