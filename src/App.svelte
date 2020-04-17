@@ -2,9 +2,9 @@
 	import Button, {Label} from '@smui/button';
 	import LinearProgress from '@smui/linear-progress';
 	import NumberField from './components/NumberField.svelte';
-	import {valueStore} from './utils/valueStore';
-	import {printSolution} from './utils/output';
-	import {prepareData, Solver, isItemsUnique} from "../dlx/index.js";
+	import {valueStore} from './code/valueStore';
+	import {isItemsUnique} from "../dlx";
+	import {printSolution} from './code/output';
 
 	let space = [
 		[1, 1, 1, 1, 1, 1, 1, 1],
@@ -89,6 +89,10 @@
 	}
 
 	function onCellClick(x, y) {
+		if (waitAnswer) {
+			return;
+		}
+
 		space[y][x] = space[y][x] ? 0 : 1;
 		solution = null;
 	}
@@ -113,27 +117,36 @@
 		solution = null;
 	}
 
+	let worker;
+
 	function onStartStop() {
+		if (waitAnswer) {
+			stop();
+		} else {
+			start();
+		}
+	}
+
+	function start() {
+		waitAnswer = true;
 		solution = null;
 
+		worker = new Worker('./build/worker.js');
 		const items = getItems();
-		const [data, error] = prepareData(items, space);
-		dataError = error;
-		if (error) {
-			return;
-		}
-
-		waitAnswer = true;
-		const itemsUnique = isItemsUnique(items);
-		const solver = new Solver(data);
-		let isSolution = false;
-		solver.findSolutions(
-			(sol) => {
-				isSolution = true;
+		worker.postMessage({items, space});
+		worker.onmessage = function(e) {
+			const [sol, error] = e.data;
+			dataError = error;
+			if (!error) {
+				const itemsUnique = isItemsUnique(items);
 				solution = printSolution(sol, itemsUnique);
-			},
-			() => isSolution
-		);
+			}
+			waitAnswer = false;
+		}
+	}
+
+	function stop() {
+		worker.terminate();
 		waitAnswer = false;
 	}
 
@@ -160,36 +173,36 @@
 <LinearProgress indeterminate closed="{!waitAnswer}"/>
 <div class="options" bind:clientHeight={optionsHeight}>
 	<div class="options-line">
-		<NumberField bind:value={$width} label="width" min="1" max="100" />
-		<NumberField bind:value={$height} label="height" min="1" max="100" />
+		<NumberField bind:value={$width} label="width" min="1" max="100" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$height} label="height" min="1" max="100" disabled="{waitAnswer}"/>
 		<div></div>
 		<div></div>
 		<div></div>
 		<div class:nocorrect="{!allValueCorrect}">
-			<NumberField bind:value={$all} label="all" min="0" max="100" />
+			<NumberField bind:value={$all} label="all" min="0" max="100" disabled="{waitAnswer}"/>
 		</div>
 	</div>
 	<div class="options-line">
-		<NumberField bind:value={$figureI} label="I" min="0" max="999" />
-		<NumberField bind:value={$figureN} label="N" min="0" max="999" />
-		<NumberField bind:value={$figureL} label="L" min="0" max="999" />
-		<NumberField bind:value={$figureU} label="U" min="0" max="999" />
-		<NumberField bind:value={$figureX} label="X" min="0" max="999" />
-		<NumberField bind:value={$figureW} label="W" min="0" max="999" />
+		<NumberField bind:value={$figureI} label="I" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureN} label="N" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureL} label="L" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureU} label="U" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureX} label="X" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureW} label="W" min="0" max="999" disabled="{waitAnswer}"/>
 	</div>
 	<div class="options-line">
-		<NumberField bind:value={$figureP} label="P" min="0" max="999" />
-		<NumberField bind:value={$figureF} label="F" min="0" max="999" />
-		<NumberField bind:value={$figureZ} label="Z" min="0" max="999" />
-		<NumberField bind:value={$figureT} label="T" min="0" max="999" />
-		<NumberField bind:value={$figureV} label="V" min="0" max="999" />
-		<NumberField bind:value={$figureY} label="v" min="0" max="999" />
+		<NumberField bind:value={$figureP} label="P" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureF} label="F" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureZ} label="Z" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureT} label="T" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureV} label="V" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureY} label="v" min="0" max="999" disabled="{waitAnswer}"/>
 	</div>
 	<div class="options-line">
-		<Button variant="raised" on:click={clearAll}>
+		<Button variant="raised" on:click={clearAll} disabled="{waitAnswer}">
 			<Label>Clear All</Label>
 		</Button>
-		<Button variant="raised" on:click={fillAll}>
+		<Button variant="raised" on:click={fillAll} disabled="{waitAnswer}">
 			<Label>Fill All</Label>
 		</Button>
 		<div></div>
@@ -215,6 +228,7 @@
 						<div
 							on:click={() => onCellClick(x, y)}
 							class="space_cell"
+							class:disabled="{waitAnswer}"
 							style="width: {cellSize}px; height: {cellSize}px; background: {cell == null ? '#ffffff' : cell};"
 						>
 						</div>
@@ -228,6 +242,7 @@
 						<div
 							on:click={() => onCellClick(x, y)}
 							class="space_cell"
+							class:disabled="{waitAnswer}"
 							class:empty_cell={!cell}
 							style="width: {cellSize}px; height: {cellSize}px;"
 						>
@@ -280,6 +295,9 @@
 	}
 	.space_cell:not(:last-child) {
 		margin-right: 1px;
+	}
+	.disabled.disabled {
+		cursor: default;
 	}
 	.empty_cell {
 		background-color: #ffffff;

@@ -3,6 +3,7 @@
 
     export let value;
     export let label;
+    export let disabled;
     export let min = Number.MIN_SAFE_INTEGER;
     export let max = Number.MAX_SAFE_INTEGER;
 
@@ -31,5 +32,6 @@
     label="{label}"
     input$min="{min}"
     input$max="{max}"
+    {disabled}
     class="custom"
 />

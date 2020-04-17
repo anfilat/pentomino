@@ -7,10 +7,10 @@ import { terser } from 'rollup-plugin-terser';
 
 const production = !process.env.ROLLUP_WATCH;
 
-export default {
+export default [{
 	input: 'src/main.js',
 	output: {
-		sourcemap: true,
+		sourcemap: production,
 		format: 'iife',
 		name: 'app',
 		file: 'public/build/bundle.js'
@@ -66,7 +66,20 @@ export default {
 	watch: {
 		clearScreen: false
 	}
-};
+}, {
+	input: 'src/code/worker.js',
+	output: {
+		sourcemap: production,
+		format: 'iife',
+		file: 'public/build/worker.js'
+	},
+	plugins: [
+		resolve({
+			browser: true,
+		}),
+		commonjs(),
+	],
+}];
 
 function serve() {
 	let started = false;

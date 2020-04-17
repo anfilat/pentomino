@@ -1,4 +1,4 @@
-import {figures, assignColors} from "../../dlx/index.js";
+import {figures, assignColors} from "../../dlx";
 
 export function printSolution(solution, itemsUnique) {
     if (itemsUnique) {
