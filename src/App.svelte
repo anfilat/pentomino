@@ -224,7 +224,7 @@
 <LinearProgress indeterminate closed="{!waitAnswer}"/>
 <div class="options" bind:clientHeight={optionsHeight}>
 	<div class="options-line">
-		<Select variant="outlined" bind:value={$selectPreset} label="Presets" class="custom">
+		<Select variant="outlined" bind:value={$selectPreset} label="Presets" class="custom" disabled="{waitAnswer}">
 			<Option value=""></Option>
 			{#each presets as preset}
 				<Option value={preset}>{preset.name}</Option>
