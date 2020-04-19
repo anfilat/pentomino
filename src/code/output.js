@@ -54,11 +54,11 @@ function printByMinColors(solution) {
 }
 
 const standardColors = {
-    0: '#8ae234',
-    1: '#fce94f',
-    2: '#ef2929',
-    3: '#3465a4',
-    4: '#34e2e2',
+    0: '#30ef30',
+    1: '#efef30',
+    2: '#ef0330',
+    3: '#3030ef',
+    4: '#30efef',
     5: '#CCCCE6',
     6: '#FF0080',
     7: '#888800',
