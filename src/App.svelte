@@ -86,7 +86,7 @@
 			} else {
 				allValueCorrect = false;
 			}
-			solution = null;
+			resetVars();
 			bunchChange = false;
 
 			selectPreset.set('');
@@ -105,7 +105,7 @@
 			}
 			space.push(line);
 		}
-		solution = null;
+		resetVars();
 	}
 
 	function onChangeAll(value) {
@@ -127,7 +127,7 @@
 		figureY.set(value);
 		bunchChange = false;
 		allValueCorrect = true;
-		solution = null;
+		resetVars();
 	}
 
 	function checkAllValueCorrect() {
@@ -136,7 +136,7 @@
 		}
 		const items = getItems();
 		allValueCorrect = items.every(([, count]) => count == $all);
-		solution = null;
+		resetVars();
 	}
 
 	function onCellClick(x, y) {
@@ -145,7 +145,7 @@
 		}
 
 		space[y][x] = space[y][x] ? 0 : 1;
-		solution = null;
+		resetVars();
 	}
 
 	function clearAll() {
@@ -155,7 +155,7 @@
 			}
 		});
 		space = space;
-		solution = null;
+		resetVars();
 	}
 
 	function fillAll() {
@@ -165,7 +165,7 @@
 			}
 		});
 		space = space;
-		solution = null;
+		resetVars();
 	}
 
 	let worker;
@@ -180,7 +180,7 @@
 
 	function start() {
 		waitAnswer = true;
-		solution = null;
+		resetVars();
 
 		worker = new Worker('./build/worker.js');
 		const items = getItems();
@@ -199,6 +199,11 @@
 	function stop() {
 		worker.terminate();
 		waitAnswer = false;
+	}
+
+	function resetVars() {
+		solution = null;
+		dataError = null;
 	}
 
 	function getItems() {
