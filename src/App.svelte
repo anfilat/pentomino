@@ -50,7 +50,8 @@
 
 	$: widthOnCell = (windowWidth - 16) / $width - 1;
 	$: heightOnCell = (windowHeight - 16 - optionsHeight - 10) / $height - 1;
-	$: cellSize = Math.min(40, Math.max(20, Math.min(widthOnCell, heightOnCell)));
+	// по ширине надо всегда вписываться из-за мобильников
+	$: cellSize = Math.min(Math.min(40, widthOnCell), Math.min(40, Math.max(20, heightOnCell)))
 
 	function onChangePreset(value) {
 		if (value) {
@@ -255,7 +256,7 @@
 		<NumberField bind:value={$figureZ} label="Z" min="0" max="999" disabled="{waitAnswer}"/>
 		<NumberField bind:value={$figureT} label="T" min="0" max="999" disabled="{waitAnswer}"/>
 		<NumberField bind:value={$figureV} label="V" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureY} label="v" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureY} label="Y" min="0" max="999" disabled="{waitAnswer}"/>
 	</div>
 	<div class="options-line">
 		<Button variant="raised" on:click={clearAll} disabled="{waitAnswer}">
