@@ -1,4 +1,4 @@
-const cacheName = 'cache-and-update-v1';
+const cacheName = 'cache-v2';
 const filesToCache = [
     './index.html',
     './global.css',
@@ -32,25 +32,13 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-    event.respondWith(fromCache(event.request));
-    event.waitUntil(update(event.request));
+    event.respondWith(
+        caches
+            .open(cacheName)
+            .then(cache => {
+                return cache
+                    .match(event.request)
+                    .then(response => response || fetch(event.request));
+            })
+    );
 });
-
-function fromCache(request) {
-    return caches
-        .open(cacheName)
-        .then(cache => {
-            return cache
-                .match(request)
-                .then(response => response || fetch(request));
-        });
-}
-
-function update(request) {
-    return caches
-        .open(cacheName)
-        .then(cache => {
-            return fetch(request)
-                .then(response => cache.put(request, response))
-        });
-}
