@@ -889,8 +889,8 @@
         }
     }
 
-    onmessage = function(e) {
-        const {items, space} = e.data;
+    onmessage = message => {
+        const {items, space} = message.data;
 
         const [data, error] = prepareData(items, space);
         if (error) {
@@ -898,15 +898,13 @@
             return;
         }
 
+        let solution = null;
         const solver = new Solver(data);
-        let isSolution = false;
         solver.findSolutions(
-            (sol) => {
-                isSolution = true;
-                postMessage([sol, null]);
-            },
-            () => isSolution
+            sol => solution = sol,
+            () => !!solution
         );
+        postMessage([solution, null]);
     };
 
 }());
