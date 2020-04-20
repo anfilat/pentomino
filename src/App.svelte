@@ -182,17 +182,23 @@
 		waitAnswer = true;
 		resetVars();
 
-		worker = new Worker('./build/worker.js');
 		const items = getItems();
+		worker = new Worker('./build/worker.js');
 		worker.postMessage({items, space});
-		worker.onmessage = function(e) {
-			const [sol, error] = e.data;
-			dataError = error;
-			if (!error) {
-				const itemsUnique = isItemsUnique(items);
-				solution = printSolution(sol, itemsUnique);
-			}
+		worker.onmessage = message => {
 			waitAnswer = false;
+
+			const [sol, error] = message.data;
+			dataError = error;
+			if (error) {
+				return;
+			}
+			if (!sol) {
+				dataError = 'No solution';
+				return;
+			}
+			const itemsUnique = isItemsUnique(items);
+			solution = printSolution(sol, itemsUnique);
 		}
 	}
 
