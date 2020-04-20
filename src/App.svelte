@@ -41,6 +41,11 @@
 	let dataError;
 	let waitAnswer = false;
 
+	let area;
+	$: area = space.reduce((area, line) => {
+		return line.reduce((area, cell) => area + cell, area);
+	}, 0);
+
 	let windowWidth = 0;
 	let windowHeight = 0;
 	let optionsHeight = 0;
@@ -243,10 +248,8 @@
 		</Select>
 		<div></div>
 		<div></div>
-		<div></div>
 		<NumberField bind:value={$width} label="width" min="1" max="100" disabled="{waitAnswer}"/>
 		<NumberField bind:value={$height} label="height" min="1" max="100" disabled="{waitAnswer}"/>
-		<div></div>
 		<div></div>
 		<div></div>
 		<div class:nocorrect="{!allValueCorrect}">
@@ -283,11 +286,13 @@
 			<Label>{waitAnswer ? 'Stop' : 'Start'}</Label>
 		</Button>
 	</div>
-	{#if dataError}
-		<div class="error-line">
+	<div class="error-line">
+		{#if dataError}
 			<div class="error">{dataError}</div>
-		</div>
-	{/if}
+		{:else}
+			<div>Area is {area} cells</div>
+		{/if}
+	</div>
 </div>
 
 <div class="space">
@@ -314,7 +319,7 @@
 							on:click={() => onCellClick(x, y)}
 							class="space_cell"
 							class:disabled="{waitAnswer}"
-							class:empty_cell={!cell}
+							class:empty_cell="{!cell}"
 							style="width: {cellSize}px; height: {cellSize}px;"
 						>
 						</div>
@@ -337,11 +342,6 @@
 	}
 	.options-line > :global(*:not(:last-child)) {
 		margin-right: 10px;
-	}
-	.error-line {
-		display: flex;
-		justify-content: center;
-		margin-bottom: 10px;
 	}
 	.nocorrect {
 		opacity: 0.5;
@@ -367,11 +367,16 @@
 	.space_cell:not(:last-child) {
 		margin-right: 1px;
 	}
-	.disabled.disabled {
+	.disabled {
 		cursor: default;
 	}
 	.empty_cell {
 		background-color: #ffffff;
+	}
+	.error-line {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 10px;
 	}
 	.error {
 		color: #b71c1c;
