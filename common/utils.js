@@ -1,4 +1,4 @@
-import {figures} from "./index.js";
+import {figures} from "./figures.js";
 
 // каждая фигурка пентамино присутствует не более чем в одном экземпляре
 export function isItemsUnique(items) {
