@@ -1,4 +1,4 @@
-const cacheName = 'cache-v6';
+const cacheName = 'cache-v7';
 const filesToCache = [
     './index.html',
     './global.css',
