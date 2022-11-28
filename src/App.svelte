@@ -330,8 +330,7 @@
 
 <style>
 	.options {
-		margin-top: 8px;
-		margin-bottom: 10px;
+        margin: 8px 8px 10px;
 	}
 	.options-line {
 		display: flex;

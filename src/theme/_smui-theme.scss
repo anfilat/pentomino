@@ -12,12 +12,12 @@
 );
 
 @use '@material/textfield/index' as textfield with (
-    $height: 40px,
-    $padding-horizontal: 10px
+    $height: 40px
 );
 
 @use '@material/select/index' as select with (
-    $height: 40px
+    $height: 40px,
+    $default-width: 170px
 );
 
 html,
