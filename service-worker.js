@@ -1,7 +1,8 @@
-const cacheName = 'cache-v2';
+const cacheName = 'cache-v3';
 const filesToCache = [
     './index.html',
     './global.css',
+    './smui.css',
     './build/bundle.css',
     './build/bundle.js',
     './build/worker.js',
