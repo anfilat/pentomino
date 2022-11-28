@@ -907,4 +907,4 @@
         postMessage([solution, null]);
     };
 
-}());
+})();
