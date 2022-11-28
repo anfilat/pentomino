@@ -247,10 +247,8 @@
 			{/each}
 		</Select>
 		<div></div>
-		<div></div>
 		<NumberField bind:value={$width} label="width" min="1" max="100" disabled="{waitAnswer}"/>
 		<NumberField bind:value={$height} label="height" min="1" max="100" disabled="{waitAnswer}"/>
-		<div></div>
 		<div></div>
 		<div class:nocorrect="{!allValueCorrect}">
 			<NumberField bind:value={$all} label="all" min="0" max="100" disabled="{waitAnswer}"/>
