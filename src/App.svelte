@@ -60,7 +60,7 @@
 
 	function onChangePreset(value) {
 		if (value) {
-			const preset = presets.find(({name}) => name === value);
+			const preset = presets.find(({name}) => name === value.name);
 
 			bunchChange = true;
 			space = prepareSpace(preset.space);
