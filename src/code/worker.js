@@ -1,4 +1,4 @@
-import {prepareData, Solver} from "../../dlx";
+import {prepareData, Solver} from "/dlx/index.js";
 
 onmessage = message => {
     const {items, space} = message.data;

@@ -1,12 +1,12 @@
 {
   "name": "pentomino",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Pentamino solver",
   "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public",
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
     "prepare": "smui-theme compile public/smui.css -i src/theme",
     "test": "jest"
   },
@@ -17,26 +17,19 @@
     "@babel/plugin-transform-class-properties": "^7.25.9",
     "@babel/preset-env": "^7.26.9",
     "@material/typography": "^14.0.0",
-    "@rollup/plugin-commonjs": "^29.0.0",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-terser": "^0.4.4",
     "@smui/button": "^6.1.4",
     "@smui/linear-progress": "^6.1.4",
     "@smui/select": "^6.1.4",
     "@smui/textfield": "^6.1.4",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "babel-jest": "^30.0.0",
     "jest": "^30.0.0",
-    "rollup": "^4.57.1",
-    "rollup-plugin-css-only": "^4.3.0",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-svelte": "^7.1.0",
     "sass": "^1.77.6",
     "smui-theme": "^6.2.0",
-    "svelte": "^4.2.19"
+    "svelte": "^4.2.19",
+    "vite": "^5.0.0"
   },
   "dependencies": {
-    "chalk": "^5.6.2",
-    "sirv-cli": "^2.0.2"
+    "chalk": "^5.6.2"
   }
 }

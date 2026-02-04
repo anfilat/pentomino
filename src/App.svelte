@@ -188,7 +188,7 @@
 		resetVars();
 
 		const items = getItems();
-		worker = new Worker('./build/worker.js');
+		worker = new Worker(new URL('./code/worker.js', import.meta.url), { type: 'module' });
 		worker.postMessage({items, space});
 		worker.onmessage = message => {
 			waitAnswer = false;
