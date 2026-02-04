@@ -20,5 +20,6 @@ export default defineConfig({
       }
     }
   },
-  publicDir: 'public'
+  publicDir: 'public',
+  base: process.env.NODE_ENV === 'production' ? '/pentomino/' : '/',
 });
