@@ -1,18 +1,9 @@
 <script>
     import Textfield from '@smui/textfield'
 
-    export let value;
-    export let label;
-    export let disabled;
-    export let min = Number.MIN_SAFE_INTEGER;
-    export let max = Number.MAX_SAFE_INTEGER;
+    let { value, label, disabled, min = Number.MIN_SAFE_INTEGER, max = Number.MAX_SAFE_INTEGER } = $props();
 
-    let valueInternal;
-
-    $: {
-        value = toLimits(value);
-        valueInternal = value;
-    }
+    let valueInternal = $derived(toLimits(value));
 
     function onChange() {
         valueInternal = toLimits(valueInternal);
@@ -28,10 +19,10 @@
     type="number"
     variant="outlined"
     bind:value={valueInternal}
-    on:change={onChange}
-    label="{label}"
-    input$min="{min}"
-    input$max="{max}"
+    onchange={onChange}
+    label={label}
+    input$min={min}
+    input$max={max}
     {disabled}
     class="custom"
 />

@@ -8,7 +8,7 @@
 	import {presets} from './code/presets';
 	import {isItemsUnique, fillItems, prepareSpace} from "../common";
 
-	let space = [
+	let space = $state([
 		[1, 1, 1, 1, 1, 1, 1, 1],
 		[1, 1, 1, 1, 1, 1, 1, 1],
 		[1, 1, 1, 1, 1, 1, 1, 1],
@@ -17,14 +17,14 @@
 		[1, 1, 1, 1, 1, 1, 1, 1],
 		[1, 1, 1, 1, 1, 1, 1, 1],
 		[1, 1, 1, 1, 1, 1, 1, 1]
-	];
-	let solution = null;
+	]);
+	let solution = $state(null);
 
-	let bunchChange = false;
+	let bunchChange = $state(false);
 	const selectPreset = valueStore('', onChangePreset);
 	const width = valueStore(8, createSpace);
 	const height = valueStore(8, createSpace);
-	let allValueCorrect = true;
+	let allValueCorrect = $state(true);
 	const all = valueStore(1, onChangeAll);
 	const figureI = valueStore(1, checkAllValueCorrect);
 	const figureN = valueStore(1, checkAllValueCorrect);
@@ -38,25 +38,20 @@
 	const figureT = valueStore(1, checkAllValueCorrect);
 	const figureV = valueStore(1, checkAllValueCorrect);
 	const figureY = valueStore(1, checkAllValueCorrect);
-	let dataError;
-	let waitAnswer = false;
+	let dataError = $state();
+	let waitAnswer = $state(false);
 
-	let area;
-	$: area = space.reduce((area, line) => {
+	let area = $derived(space.reduce((area, line) => {
 		return line.reduce((area, cell) => area + cell, area);
-	}, 0);
+	}, 0));
 
-	let windowWidth = 0;
-	let windowHeight = 0;
-	let optionsHeight = 0;
-	let widthOnCell;
-	let heightOnCell;
-	let cellSize;
-
-	$: widthOnCell = (windowWidth - 16) / $width - 1;
-	$: heightOnCell = (windowHeight - 16 - optionsHeight - 10) / $height - 1;
+	let windowWidth = $state(0);
+	let windowHeight = $state(0);
+	let optionsHeight = $state(0);
+	let widthOnCell = $derived((windowWidth - 16) / $width - 1);
+	let heightOnCell = $derived((windowHeight - 16 - optionsHeight - 10) / $height - 1);
 	// по ширине надо всегда вписываться из-за мобильников
-	$: cellSize = Math.min(Math.min(40, widthOnCell), Math.min(40, Math.max(20, heightOnCell)))
+	let cellSize = $derived(Math.min(Math.min(40, widthOnCell), Math.min(40, Math.max(20, heightOnCell))))
 
 	function onChangePreset(value) {
 		if (value) {
@@ -149,27 +144,26 @@
 			return;
 		}
 
-		space[y][x] = space[y][x] ? 0 : 1;
+		space = space.map((line, yi) => {
+			if (yi === y) {
+				return line.map((cell, xi) => xi === x ? (cell ? 0 : 1) : cell);
+			}
+			return line;
+		});
 		resetVars();
 	}
 
 	function clearAll() {
-		space.forEach(line => {
-			for (let i = 0; i < line.length; i++) {
-				line[i] = 0;
-			}
+		space = space.map(line => {
+			return line.map(() => 0);
 		});
-		space = space;
 		resetVars();
 	}
 
 	function fillAll() {
-		space.forEach(line => {
-			for (let i = 0; i < line.length; i++) {
-				line[i] = 1;
-			}
+		space = space.map(line => {
+			return line.map(() => 1);
 		});
-		space = space;
 		resetVars();
 	}
 
@@ -189,7 +183,7 @@
 
 		const items = getItems();
 		worker = new Worker(new URL('./code/worker.js', import.meta.url), { type: 'module' });
-		worker.postMessage({items, space});
+		worker.postMessage({items, space: JSON.parse(JSON.stringify(space))});
 		worker.onmessage = message => {
 			waitAnswer = false;
 
@@ -237,50 +231,50 @@
 
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight}/>
 
-<LinearProgress indeterminate closed="{!waitAnswer}"/>
+<LinearProgress indeterminate closed={!waitAnswer}/>
 <div class="options" bind:clientHeight={optionsHeight}>
 	<div class="options-line">
-		<Select variant="outlined" bind:value={$selectPreset} label="Presets" class="custom" disabled="{waitAnswer}">
+		<Select variant="outlined" bind:value={$selectPreset} label="Presets" class="custom" disabled={waitAnswer}>
 			<Option value=""></Option>
 			{#each presets as preset}
 				<Option value={preset}>{preset.name}</Option>
 			{/each}
 		</Select>
 		<div></div>
-		<NumberField bind:value={$width} label="width" min="1" max="100" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$height} label="height" min="1" max="100" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$width} label="width" min="1" max="100" disabled={waitAnswer}/>
+		<NumberField bind:value={$height} label="height" min="1" max="100" disabled={waitAnswer}/>
 		<div></div>
 		<div class:nocorrect="{!allValueCorrect}">
-			<NumberField bind:value={$all} label="all" min="0" max="100" disabled="{waitAnswer}"/>
+			<NumberField bind:value={$all} label="all" min="0" max="100" disabled={waitAnswer}/>
 		</div>
 	</div>
 	<div class="options-line">
-		<NumberField bind:value={$figureI} label="I" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureN} label="N" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureL} label="L" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureU} label="U" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureX} label="X" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureW} label="W" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureI} label="I" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureN} label="N" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureL} label="L" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureU} label="U" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureX} label="X" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureW} label="W" min="0" max="999" disabled={waitAnswer}/>
 	</div>
 	<div class="options-line">
-		<NumberField bind:value={$figureP} label="P" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureF} label="F" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureZ} label="Z" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureT} label="T" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureV} label="V" min="0" max="999" disabled="{waitAnswer}"/>
-		<NumberField bind:value={$figureY} label="Y" min="0" max="999" disabled="{waitAnswer}"/>
+		<NumberField bind:value={$figureP} label="P" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureF} label="F" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureZ} label="Z" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureT} label="T" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureV} label="V" min="0" max="999" disabled={waitAnswer}/>
+		<NumberField bind:value={$figureY} label="Y" min="0" max="999" disabled={waitAnswer}/>
 	</div>
 	<div class="options-line">
-		<Button variant="raised" on:click={clearAll} disabled="{waitAnswer}">
+		<Button variant="raised" onclick={clearAll} disabled={waitAnswer}>
 			<Label>Clear All</Label>
 		</Button>
-		<Button variant="raised" on:click={fillAll} disabled="{waitAnswer}">
+		<Button variant="raised" onclick={fillAll} disabled={waitAnswer}>
 			<Label>Fill All</Label>
 		</Button>
 		<div></div>
 		<div></div>
 		<div></div>
-		<Button variant="raised" on:click={onStartStop}>
+		<Button variant="raised" onclick={onStartStop}>
 			<Label>{waitAnswer ? 'Stop' : 'Start'}</Label>
 		</Button>
 	</div>
@@ -300,7 +294,7 @@
 				<div class="space_line">
 					{#each line as cell, x}
 						<div
-							on:click={() => onCellClick(x, y)}
+							onclick={() => onCellClick(x, y)}
 							class="space_cell"
 							class:disabled="{waitAnswer}"
 							style="width: {cellSize}px; height: {cellSize}px; background: {cell == null ? '#ffffff' : cell};"
@@ -314,7 +308,7 @@
 				<div class="space_line">
 					{#each line as cell, x}
 						<div
-							on:click={() => onCellClick(x, y)}
+							onclick={() => onCellClick(x, y)}
 							class="space_cell"
 							class:disabled="{waitAnswer}"
 							class:empty_cell="{!cell}"
