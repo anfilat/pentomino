@@ -13,7 +13,8 @@
 
 	<script>
 		if('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/service-worker.js');
+			const basePath = location.pathname.replace(/\/$/, '');
+			navigator.serviceWorker.register(basePath + '/service-worker.js');
 		}
 	</script>
 </head>
