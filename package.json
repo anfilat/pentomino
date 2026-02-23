@@ -8,7 +8,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "prepare": "smui-theme compile public/smui.css -i src/theme",
-    "test": "jest"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "Andrey Filatkin <anfilat@mail.ru>",
