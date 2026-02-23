@@ -9,16 +9,18 @@ This is a Pentomino solver implementing Knuth's Dancing Links (Algorithm X) algo
 ## Development Commands
 
 ### Build
-- `npm run build` - Build the web application (production)
-- `npm run dev` - Development build with watch mode and live reload
+- `npm run build` - Build the web application (production) using Vite
+- `npm run dev` - Start development server with hot module replacement
+- `npm run preview` - Preview production build locally
 - `npm run prepare` - Compile SMUI theme from `src/theme` to `public/smui.css`
 
 ### Serve
 - `npm start` - Serve the built web application locally (uses sirv-cli)
 
 ### Testing
-- `npm test` - Run Jest tests
+- `npm test` - Run Vitest tests
 - Tests are located in `test/` directory
+- Vitest configuration: `vitest.config.js` (globals enabled, Node environment)
 
 ### CLI Usage
 ```bash
@@ -73,10 +75,11 @@ The Dancing Links implementation is shared between CLI and web versions:
 
 ### Build Configuration
 
-- **`rollup.config.js`**: Two build targets:
-  1. `src/main.js` → `public/build/bundle.js` (main app with Svelte)
-  2. `src/code/worker.js` → `public/build/worker.js` (web worker)
-- Uses Rollup with Svelte plugin, SMUI components, and livereload in dev mode
+- **`vite.config.js`**: Vite configuration with Svelte plugin
+- **`vitest.config.js`**: Vitest test configuration (uses same Vite config for tests)
+- Build outputs to `public/build/` directory
+- Uses Vite with Svelte plugin and SMUI components
+- Hot module replacement in dev mode
 
 ## Data Flow
 
